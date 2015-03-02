@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/setup.sh

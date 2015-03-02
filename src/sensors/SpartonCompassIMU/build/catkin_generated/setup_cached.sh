@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+# generated from catkin/python/catkin/environment_cache.py
+
+# based on a snapshot of the environment before and after calling the setup script
+# it emulates the modifications of the setup script without recurring computations
+
+# new environment variables
+
+# modified environment variables
+export CATKIN_TEST_RESULTS_DIR="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/test_results"
+export CMAKE_PREFIX_PATH="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel:/home/srmauv/srmauv/projectBlue/devel:/opt/ros/indigo:/~/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets"
+export CPATH="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/include:/home/srmauv/srmauv/projectBlue/devel/include:/opt/ros/indigo/include:/~/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/include:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/include:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/include"
+export LD_LIBRARY_PATH="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/lib:/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/lib/x86_64-linux-gnu:/home/srmauv/srmauv/projectBlue/devel/lib/x86_64-linux-gnu:/opt/ros/indigo/lib/x86_64-linux-gnu:/~/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib/x86_64-linux-gnu:/home/srmauv/srmauv/projectBlue/devel/lib:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/lib:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/lib/x86_64-linux-gnu:/~/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib/x86_64-linux-gnu:/opt/ros/indigo/lib"
+export PATH="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/bin:/home/srmauv/srmauv/projectBlue/devel/bin:/opt/ros/indigo/bin:/~/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/bin:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/bin:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+export PKG_CONFIG_PATH="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/lib/pkgconfig:/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/lib/x86_64-linux-gnu/pkgconfig:/home/srmauv/srmauv/projectBlue/devel/lib/x86_64-linux-gnu/pkgconfig:/opt/ros/indigo/lib/x86_64-linux-gnu/pkgconfig:/~/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib/x86_64-linux-gnu/pkgconfig:/home/srmauv/srmauv/projectBlue/devel/lib/pkgconfig:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/lib/pkgconfig:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/lib/x86_64-linux-gnu/pkgconfig:/~/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib/pkgconfig:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib/pkgconfig:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib/x86_64-linux-gnu/pkgconfig:/opt/ros/indigo/lib/pkgconfig:/usr/local/lib/pkgconfig"
+export PYTHONPATH="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/lib/python2.7/dist-packages:/home/srmauv/srmauv/projectBlue/devel/lib/python2.7/dist-packages:/opt/ros/indigo/lib/python2.7/dist-packages:/~/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib/python2.7/dist-packages:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/lib/python2.7/dist-packages:/home/srmauv/Qt5.3.0/5.3/gcc_64/lib/cmake/Qt5Widgets/lib/python2.7/dist-packages"
+export ROSLISP_PACKAGE_DIRECTORIES="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/devel/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
+export ROS_PACKAGE_PATH="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU:$ROS_PACKAGE_PATH"
+export ROS_TEST_RESULTS_DIR="/home/srmauv/srmauv/projectBlue/src/sensors/SpartonCompassIMU/build/test_results"
