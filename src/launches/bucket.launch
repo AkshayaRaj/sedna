@@ -1,0 +1,6 @@
+<launch>
+<node name="bucket" pkg="vision" type="dropper_task.py">
+</node>
+
+</launch>
+

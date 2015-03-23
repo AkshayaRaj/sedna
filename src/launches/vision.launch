@@ -1,0 +1,11 @@
+<launch>
+
+<include file="$(find launches)/line.launch" />
+<include file="$(find launches)/flare.launch" />
+<include file="$(find launches)/bucket.launch" />
+
+</launch>
+
+
+
+

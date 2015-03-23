@@ -263,7 +263,7 @@ int main (int argc,char **argv){
 	std_mode.data=0;
 	locomotionModePub.publish(std_mode);	
 	ROS_INFO("PID controllers are ready lets roll.. !");
-	
+	ctrl.pitch_setpoint=-60;	
 	while(ros::ok())
 	{
 		if(inHovermode && oldHovermode!=inHovermode) // so we hover over a point
@@ -331,6 +331,7 @@ int main (int argc,char **argv){
 				pidInfo.heading.i=headingPID.getIntegral();
 				pidInfo.heading.d=headingPID.getDerivative();
 				pidInfo.heading.total=headingPID.getTotal();
+				//heading_output=0;
 
 		}
 		else{
@@ -449,7 +450,7 @@ int limitSeabotix(int speed){
 
   if( speed==0)
       return 0;
-  int out=(int)fmap(speed,0,255,24,255);
+  int out=(int)fmap(speed,0,255,25,255);
   return out;
 
 }

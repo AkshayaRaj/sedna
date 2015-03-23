@@ -13,4 +13,6 @@
 	<!--launch AHRS-8-->
 	<include file="$(find SpartonCompassIMU)/AHRS-8.launch" />
 
+	<include file="$(find launches)/vision.launch" />
+
 </launch>

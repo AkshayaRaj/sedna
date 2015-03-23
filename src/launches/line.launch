@@ -1,0 +1,6 @@
+<launch>
+<node name="line_follower" pkg="vision" type="lineFollower_new.py">
+</node>
+
+</launch>
+

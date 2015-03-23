@@ -139,9 +139,9 @@ void dropperCallback(const std_msgs::Bool &msg){
      dropperArmed=false;
      */
        
-       blink(0,0,255,3);
+       blink(0,0,255,1);
        digitalWrite(DROPPER,LOW);
-       delay(1500);
+       delay(2500);
        digitalWrite(DROPPER,HIGH);
   
 }

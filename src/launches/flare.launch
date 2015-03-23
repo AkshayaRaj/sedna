@@ -1,0 +1,6 @@
+<launch>
+<node name="flare" pkg="vision" type="flare.py">
+</node>
+
+</launch>
+

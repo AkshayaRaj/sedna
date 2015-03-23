@@ -1,10 +1,10 @@
 // teleop.heading_setpoint in runMission for bucket can be set to EAST  !
 
 
-#define NORTH 109
-#define DEPTH_SAUVC 410
-#define DEPTH_BUCKET 334
-#define DEPTH_FLARE 454
+#define NORTH -150
+#define DEPTH_SAUVC 340
+#define DEPTH_BUCKET 290
+#define DEPTH_FLARE 354
 #include <srmauv_msgs/teleop_sedna.h>
 #include <ros/ros.h>
 #include<keyboard/Key.h>
@@ -372,12 +372,12 @@ void keyDown(const keyboard::KeyConstPtr & key){
                   }
 
       case 273: { // forward
-        teleop.forward_speed=190;
+        teleop.forward_speed=210;
         break;
       }
 
       case 274: { //reverse
-        teleop.forward_speed=-190;
+        teleop.forward_speed=-210;
         break;
       }
       case 276 :{ //left
