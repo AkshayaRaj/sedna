@@ -19,7 +19,7 @@
 #include <srmauv_msgs/line.h>
 #include <srmauv_msgs/flare.h>
 #include <srmauv_msgs/bucket.h>
-
+#include <sensor_msgs/Imu.h>
 
 srmauv_msgs::teleop_sedna teleop;
 srmauv_msgs::depth depth;
@@ -38,9 +38,10 @@ double yaw,pitch,roll;
 ros::Subscriber keyDown_sub;
 ros::Subscriber keyUp_sub;
 ros::Subscriber pressureSub;
-ros::Subscriber imuSub;
+
 ros::Subscriber teleopSetter;
 ros::Subscriber headingSub;
+ros::Subscriber imuSub;
 ros::Subscriber lineSub;
 ros::Subscriber flareSub;
 ros::Subscriber bucketSub;
@@ -68,6 +69,7 @@ void runMission();
 void getLine(const srmauv_msgs::line::ConstPtr&msg);
 void getFlare(const srmauv_msgs::flare::ConstPtr&msg);
 void getBucket(const srmauv_msgs::bucket::ConstPtr&msg);
+void getImu(const sensor_msgs::Imu::ConstPtr& msg);
 
 bool in_depth=false;
 bool in_yaw=false;
@@ -100,7 +102,7 @@ int main(int argc,char** argv){
   teleop.depth_setpoint=DEPTH_SAUVC;
   teleop.heading_setpoint=north;
   dropBall.data=false;
-	
+
   keyDown_sub=nh.subscribe("/keyboard/keydown",1000,keyDown);
   keyUp_sub=nh.subscribe("/keyboard/keyup",1000,keyUp);
   pressureSub=nh.subscribe("/pressure_data",1000,getPressure);
@@ -110,7 +112,8 @@ int main(int argc,char** argv){
   lineSub=nh.subscribe("/line_follower",1000,getLine);
   flareSub=nh.subscribe("/flare",1000,getFlare);
   bucketSub=nh.subscribe("/bucket",1000,getBucket);
-	
+  imuSub=nh.subscribe("/imu/data",1000,getImu);
+
   inLinePub=nh.advertise<std_msgs::Bool>("/inLine",100);
   inFlarePub=nh.advertise<std_msgs::Bool>("/inFlare",100);
   inBucketPub=nh.advertise<std_msgs::Bool>("/inBucket",100);
@@ -162,13 +165,13 @@ if(!inSidemove)
 
 //dropperPub.publish(dropBall);
   if(inLine && line.possible){
-   // ******************* subject to change +/- : 
-    teleop.heading_setpoint=yaw + line.heading;
+   // ******************* subject to change +/- :
+    teleop.heading_setpoint=-yaw + line.heading;
     teleop.sidemove_input=line.distance;
 	if(!inSidemove)
 		teleop.sidemove_input=0;
   }
-  
+
 
 
  if (inFlare && flare.possible){
@@ -209,7 +212,21 @@ void getOrientation(const sensor_msgs::Imu::ConstPtr &msg){
 }
 
 void getHeading(const geometry_msgs::Pose2D::ConstPtr& msg){
-  yaw=msg->theta;
+//  yaw=msg->theta;
+}
+
+void getImu(const sensor_msgs::Imu::ConstPtr& msg){
+  double roll,pitch,heading;
+  tf::Quaternion q;
+
+  tf::quaternionMsgToTF(msg->orientation,q);
+// tf::Matrix3x3(q).getRPY(roll,pitch,yaw);
+ // tf::Matrix3x3(q).getEulerYPR(yaw,pitch,roll);
+  tf::Matrix3x3(q).getEulerZYX(yaw,pitch,roll);
+//  tf::Matrix3x3(q).
+  yaw=heading/M_PI*180;
+
+//int x=5;
 }
 
 void getLine(const srmauv_msgs::line::ConstPtr&msg){
@@ -395,7 +412,7 @@ void keyDown(const keyboard::KeyConstPtr & key){
 
       case 108: {  // l : enable/disable lineFollower
         inLine=!inLine;
-	
+
 	//inSidemove=!inSidemove;
 	if(inLine){
 		inSidemove=true;
@@ -416,7 +433,7 @@ void keyDown(const keyboard::KeyConstPtr & key){
 
       case 98:{ // b : enable/disable bucket detector
         inBucket=!inBucket;
-        
+
 	if(inBucket){
 		inLine=false;
 		inFlare=false;
@@ -440,8 +457,8 @@ void keyDown(const keyboard::KeyConstPtr & key){
 	case 102 : { //f enable disable flare
 		inFlare=!inFlare;
 		//inSidemove=!inSidemove;
-		
-		
+
+
 		if(inFlare){
 			inLine=false;
 			inBucket=false;
@@ -450,12 +467,12 @@ void keyDown(const keyboard::KeyConstPtr & key){
 		else{
 			inSidemove=false;
 			teleop.sidemove_input=0;
-		}		
+		}
 	inLineBool.data=inLine;
         inBucketBool.data=inBucket;
         inFlareBool.data=inFlare;
-		
-	
+
+
 		break;
 	}
 
