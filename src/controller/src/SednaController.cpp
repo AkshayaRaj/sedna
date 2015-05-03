@@ -87,7 +87,7 @@ void getPressure(const srmauv_msgs::depth& msg);
 //void getTeleop(const srmauv_msgs::thruster::ConstPtr& msg);
 void getTeleop(const srmauv_msgs::teleop_sedna::ConstPtr &msg);
 void callback(controller::controllerConfig &config,uint32_t level);
-double getHeadingPIDUpdate(); // some angle wrapping required 
+double getHeadingPIDUpdate(); // some angle wrapping required
 float computeVelSideOffset();
 float computeVelFwdOffset();
 float interpolateDepth(float);
@@ -99,7 +99,7 @@ double fmap (int input, int in_min, int in_max, int out_min, int out_max);
 int  limitSeabotix(int speed);
 
 
-//State Machines : 
+//State Machines :
 bool inTop,inTeleop,inHovermode=false,oldHovermode=false;
 bool inDepthPID,inHeadingPID,inForwardPID,inSidemovePID,inPitchPID,inRollPID,
 	inForwardVelPID,inSidemoveVelPID;
@@ -146,14 +146,14 @@ int loc_mode_heading[4] = {-SMALL_RANGE,SMALL_RANGE,-SMALL_RANGE,SMALL_RANGE};
 
 
 
-//sets the correct actuator models 
-bool locomotion_srv_handler(srmauv_msgs::locomotion_mode::Request &req, 
+//sets the correct actuator models
+bool locomotion_srv_handler(srmauv_msgs::locomotion_mode::Request &req,
 				srmauv_msgs::locomotion_mode::Response &res)
 {
 	int mode=0;
 	if(req.forward && req.sidemove){
 		res.success=false;
-		return true;	
+		return true;
 	}
 
 	else if (req.forward)	{
@@ -164,7 +164,7 @@ bool locomotion_srv_handler(srmauv_msgs::locomotion_mode::Request &req,
 		mode=1;
 		res.success=true;
 	}
-	
+
 	else if(req.sidemove){
 		headingPID.setActuatorSatModel(loc_mode_heading[2],loc_mode_heading[3]); //ACTMIN and ACTMAX
                 forwardPID.setActuatorSatModel(loc_mode_forward[2],loc_mode_forward[3]);
@@ -183,8 +183,8 @@ bool locomotion_srv_handler(srmauv_msgs::locomotion_mode::Request &req,
 		sidemovePID.setActuatorSatModel(act_sidemove[0],act_sidemove[1]);
 		ROS_INFO("We are in Default movement mode");
 		res.success=true;
-	}		
-	
+	}
+
 	else{
 		res.success=false;
 	}
@@ -192,7 +192,7 @@ bool locomotion_srv_handler(srmauv_msgs::locomotion_mode::Request &req,
 	current_mode.data=mode;
 	locomotionModePub.publish(current_mode); //publish the mode we are in
 	return true;
-	
+
 }
 
 //the controller service call can enable/disable the various PID controllers
@@ -207,7 +207,7 @@ bool controller_srv_handler(srmauv_msgs::set_controller::Request &req,
 	inForwardVelPID=req.forward_vel;
 	inSidemoveVelPID=req.sidemove_vel;
 	inNavigation=req.navigation;
-	
+
 	res.complete=true;
 	return true;
 }
@@ -221,7 +221,7 @@ int main (int argc,char **argv){
 	double forward_vel_output,sidemove_vel_output;
 
 	ros::NodeHandle nh;
-	
+
 	teleop.tune=true;
 	teleop.depth_enable=false;
 //	ctrl.heading_setpoint=20;
@@ -232,7 +232,7 @@ int main (int argc,char **argv){
 	pid_infoPub=nh.advertise<srmauv_msgs::pid_info>("/pid_info",1000);   // verified with tuining_ui
 	  headingSub=nh.subscribe("/imu/HeadingTrue_degree",1000,getHeading);
 
-	//subscribers: 
+	//subscribers:
 
 	//DVL here:	velocitySub=nh.subscribe("
 	orientationSub=nh.subscribe("/imu/data",1000,getOrientation);
@@ -245,10 +245,10 @@ int main (int argc,char **argv){
 	server.setCallback(f);
 
 	//initialize services
-	
+
 	ros::ServiceServer locomotion_service=nh.advertiseService("controller/locomotion_mode_srv",locomotion_srv_handler);
 	ROS_INFO("Change modes using locomotion_mode_srv");
-	
+
 	ros::ServiceServer service=nh.advertiseService("controller/set_controller_srv",controller_srv_handler);
 	ROS_INFO("Enable disable PID's using set_controller_srv");
 
@@ -257,13 +257,13 @@ int main (int argc,char **argv){
 	ControllerServer as("LocomotionServer");
 	//PID Loop will run at
 	ros::Rate loop_rate(loop_frequency);
-	
+
 	//publish the initial standard mode locomotion mode message
 	std_msgs::Int8 std_mode;
 	std_mode.data=0;
-	locomotionModePub.publish(std_mode);	
+	locomotionModePub.publish(std_mode);
 	ROS_INFO("PID controllers are ready lets roll.. !");
-	ctrl.pitch_setpoint=-60;	
+//	ctrl.pitch_setpoint=-60;
 	while(ros::ok())
 	{
 		if(inHovermode && oldHovermode!=inHovermode) // so we hover over a point
@@ -273,9 +273,9 @@ int main (int argc,char **argv){
 			//ctrl.depth_setpoint=ctrl.depth_input;
 			//ctrl.pitch_setpoint=ctrl.depth_input;
 			//ctrl.heading_setpoint=ctrl.heading_input;
-			
-			oldHovermode=inHovermode;			
-		
+
+			oldHovermode=inHovermode;
+
 
 		}
 
@@ -286,7 +286,7 @@ int main (int argc,char **argv){
                         pidInfo.sidemove.i=sidemovePID.getIntegral();
                         pidInfo.sidemove.d=sidemovePID.getDerivative();
 			pidInfo.sidemove.total=sidemove_output;
-			
+
 
 		}
 		else
@@ -318,7 +318,7 @@ int main (int argc,char **argv){
 			pidInfo.depth.d=depthPID.getDerivative();
 			pidInfo.depth.total=depth_output;
 		//	ROS_INFO("P: %d\tI:%d\tD:%d\t total: %d\n",depthPID.getProportional(),depthPID.getIntegral(),depthPID.getDerivative(),depthPID.getTotal());
-			
+
 		}
 		else{
 			depth_output=0;
@@ -388,7 +388,7 @@ float interpolateDepth(float adcVal){
 	//do depth interpolation here
 	return adcVal;
 }
-	
+
 double getHeadingPIDUpdate(){
 	//this piece may be a cause of some major issues related to the heading controller.. make changes as needed : Akshaya
 	double wrappedHeading;
@@ -403,11 +403,11 @@ double getHeadingPIDUpdate(){
 
 
 void getPressure(const srmauv_msgs::depth &msg){
-	
+
 	// the message that is coming is the raw ADC value from the pressure sensor.. lets try to add some filtering to it somewhere else probably
 
 	double depth=(double)interpolateDepth((float)msg.depth);
-	
+
 	//ROS_INFO("%d",msg.depth);
 
 	depthValue.pressure=msg.depth;
@@ -425,7 +425,7 @@ void getOrientation(const sensor_msgs::Imu::ConstPtr& msg){
        // tf::Matrix3x3(q).getEulerYPR(yaw,pitch,roll);
         tf::Matrix3x3(q).getEulerZYX(yaw,pitch,roll);
       //  tf::Matrix3x3(q).
-	//ctrl.heading_input=yaw;
+	ctrl.heading_input=yaw/M_PI*180;
 	ctrl.pitch_input=pitch/M_PI*180;
 	ctrl.roll_input=roll/M_PI*180;
 	//int x=5;
@@ -435,7 +435,7 @@ void getOrientation(const sensor_msgs::Imu::ConstPtr& msg){
 }
 
 void getHeading(const geometry_msgs::Pose2D::ConstPtr& msg){
-  ctrl.heading_input=msg->theta;
+//  ctrl.heading_input=msg->theta;
 }
 
 
@@ -482,8 +482,8 @@ void setHorizontalThrustSpeed(double headingPID_output,double forwardPID_output,
    speed2_output=(int)(thruster2_ratio*(teleop_velocity.forward +forwardPID_output));
 }
 
-	
-  
+
+
 if(speed1_output>SEABOTIX_LIMIT)
     thrusterSpeed.speed1=SEABOTIX_LIMIT;
   else if(speed1_output<-SEABOTIX_LIMIT)
@@ -500,7 +500,7 @@ if(speed1_output>SEABOTIX_LIMIT)
 
 bool neg;
 double toFmap;
-if(headingPID_output<0)	
+if(headingPID_output<0)
 	neg=true;
 
 if(neg){
@@ -545,9 +545,9 @@ speed8_output=(int)(thruster8_rev_ratio*speed8_output);
 }
 else
 {
-speed8_output=(int)(thruster8_ratio*speed8_output);    
+speed8_output=(int)(thruster8_ratio*speed8_output);
 }
-	
+
 
 //  speed7_output=fmap(speed7_output,)
   if(speed7_output>SEABOTIX_LIMIT)
@@ -662,7 +662,7 @@ void callback(controller::controllerConfig &config, uint32_t level) {
         rollPID.setTd(config.roll_Td);
         rollPID.setTi(config.roll_Ti);
         rollPID.setActuatorSatModel(config.roll_min,config.roll_max);
-	
+
 	sidemovePID.setKp(config.sidemove_Kp);
         sidemovePID.setTd(config.sidemove_Td);
         sidemovePID.setTi(config.sidemove_Ti);
@@ -696,9 +696,9 @@ void getTeleop(const srmauv_msgs::teleop_sedna::ConstPtr &msg){
    ctrl.roll_setpoint=msg->roll_setpoint;
    //teleop.depth_enable=msg->depth_enable;
    inDepthPID=msg->depth_enable;
-   ROS_INFO("inDepth [%d]",inDepthPID);
+  // ROS_INFO("inDepth [%d]",inDepthPID);
    inHeadingPID=inPitchPID=inRollPID=msg->pid_enable;
-	//inSidemovePID=true; /// this might not be a good idea.. but sidemove pid is always on 
+	//inSidemovePID=true; /// this might not be a good idea.. but sidemove pid is always on
 	ctrl.sidemove_input=msg->sidemove_input;   // if not using sidemove make sidemove_input = 0
 	ctrl.forward_input=msg->forward_input;
 	if(msg->sidemove_input==0)
@@ -714,6 +714,3 @@ void getTeleop(const srmauv_msgs::teleop_sedna::ConstPtr &msg){
  	}
 
 }
-
-
-

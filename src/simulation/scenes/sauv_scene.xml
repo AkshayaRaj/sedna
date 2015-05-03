@@ -1,0 +1,356 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE UWSimScene SYSTEM "UWSimScene.dtd" >
+
+<UWSimScene>
+  <oceanState>
+    <windx> 0 </windx>
+    <windy> 0 </windy>
+    <windSpeed> 0 </windSpeed>
+    <depth> 3.0 </depth>
+    <reflectionDamping> 0.35 </reflectionDamping>
+    <waveScale> 0 </waveScale>
+    <isNotChoppy> 0 </isNotChoppy>
+    <choppyFactor> 0 </choppyFactor>
+    <crestFoamHeight> 0 </crestFoamHeight>
+    <oceanSurfaceHeight> 0 </oceanSurfaceHeight>
+    <fog>
+      <density> 0</density>
+      <color>
+	<r>0</r>
+	<g>0.05</g>
+	<b>0.3</b>
+      </color>
+    </fog>
+    <color>
+      <r>0.0</r>
+      <g>0.05</g>
+      <b>0.3</b>
+    </color>
+    <attenuation>
+      <r>0.015</r>
+      <g>0.0075 </g>
+      <b> 0.005 </b>
+    </attenuation>
+  </oceanState>
+
+  <simParams>
+    <disableShaders> 0 </disableShaders>
+    <resw> 1024 </resw>
+    <resh> 760 </resh>
+    <!-- <offsetp>
+	 <x>0</x>
+	 <y>0</y>
+	 <z>0</z>
+	 </offsetp>
+	 <offsetr>
+	 <x> 3.14</x>
+	 <y> 0</y>
+	 <z> -1.57 </z>
+	 </offsetr> -->
+    <enablePhysics> 1 </enablePhysics>
+  </simParams>
+
+  <camera>
+    <freeMotion> 1 </freeMotion>
+    <objectToTrack>sedna/base_link</objectToTrack>
+    <fov> 60 </fov>
+    <aspectRatio> 1.33 </aspectRatio>
+    <near> 1 </near>
+    <far> 10000 </far>
+    <position>
+      <x>-6</x>
+      <y>-6</y>
+      <z>8</z>
+    </position>
+    <lookAt>
+      <x>0</x>
+      <y>0 </y>
+      <z>0 </z>
+    </lookAt>
+  </camera>
+
+  <vehicle>
+    <name>sedna</name>
+    <file>models/robot.urdf</file>
+    <position>
+      <x> 1.3 </x>
+      <y> 2.0 </y>
+      <z> 0.0 </z>
+    </position>
+    <orientation>
+      <r>0.0</r>
+      <p>0.0</p>
+      <y>0.0</y>
+    </orientation>
+    <virtualCamera>
+      <name>bowtech1</name>
+      <relativeTo>body_link</relativeTo>
+      <resw> 640 </resw>
+      <resh> 480 </resh>
+      <position>
+        <x>0.0</x>
+        <y>0.6</y>
+        <z> 0 </z>
+      </position>
+      <orientation>
+        <r>0</r>
+        <p>0</p>
+        <y>0 </y>
+      </orientation>
+    </virtualCamera>
+
+    <!-- draws the FOV of the camera projected on the scene each 2 seconds
+	 <showpath>2</showpath> -->
+    <virtualCamera>
+      <name>bowtech2</name>
+      <relativeTo>base_link</relativeTo>
+      <resw> 640</resw>
+      <resh> 480 </resh>
+      <position>
+        <x>0.0</x>
+        <y>0.4 </y>
+        <z>-0.1</z>
+      </position>
+      <orientation>
+        <r>1.5</r>
+        <p>0</p>
+        <y>0</y>
+      </orientation>
+    </virtualCamera>
+    <rangeSensor>
+      <name> sonarleft </name>
+      <relativeTo>body_link</relativeTo>
+      <range>5</range>
+      <visible>1</visible>
+      <position>
+	<x>0.0</x>
+	<y>0.3</y>
+	<z> 0 </z>
+      </position>
+      <orientation>
+	<r>0</r>
+	<p>-13.5</p>
+	<y>3.145</y>
+      </orientation>
+    </rangeSensor>
+    <rangeSensor>
+      <name> sonarright </name>
+      <relativeTo>body_link</relativeTo>
+      <range>5</range>
+      <visible>1</visible>
+      <position>
+	<x>0.0</x>
+	<y>0.3</y>
+	<z> 0 </z>
+      </position>
+      <orientation>
+	<r>0.0</r>
+	<p>16.5</p>
+	<y>3.145</y>
+      </orientation>
+    </rangeSensor>
+
+    <imu>
+      <name>imu</name>
+      <relativeTo>base_link</relativeTo>
+      <position>
+	<x>0</x>
+	<y>0</y>
+	<z>0</z>
+      </position>
+      <orientation>
+	<r>0</r>
+	<p>0</p>
+	<y>3.1415</y>
+      </orientation>
+      <std>0.00000001</std>
+    </imu>
+
+    <pressureSensor>
+      <name>pressureSensor</name>
+      <relativeTo>base_link</relativeTo>
+      <position>
+        <x>0</x>
+        <y>0</y>
+        <z>0.2</z>
+      </position>
+      <orientation>
+        <r>0</r>
+        <p>0</p>
+        <y>0</y>
+      </orientation>
+      <std>0.02</std>
+    </pressureSensor>
+
+    <gpsSensor>
+      <name>GPSSensor</name>
+      <relativeTo>base_link</relativeTo>
+      <position>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </position>
+      <orientation>
+        <r>0</r>
+        <p>0</p>
+        <y>0</y>
+      </orientation>
+      <std>0.00005</std>
+    </gpsSensor>
+
+    <dvlSensor>
+      <name>DVLSensor</name>
+      <relativeTo>base_link</relativeTo>
+      <position>
+        <x>-0.75</x>
+        <y>0</y>
+        <z>0</z>
+      </position>
+      <orientation>
+        <r>0</r>
+        <p>0</p>
+        <y>3.926</y>
+      </orientation>
+      <std>0.0015</std>
+    </dvlSensor>
+
+  </vehicle>
+
+   <object>
+    <name>pool</name>
+    <file>models/pool.osg</file>
+    <position>
+      <x> 0</x>
+      <y> 0 </y>
+      <z> -2.2 </z>
+    </position>
+    <orientation>
+      <r>1.57</r>
+      <p>0</p>
+      <y>0</y>
+    </orientation>
+    <!-- <offsetp>
+	 <x>-1.5</x>
+	 <y>-3.0</y>
+	 <z>0</z>
+	 </offsetp> -->
+    <!-- <offsetr>
+	 <x> 3.1415</x>
+	 <y> 0</y>
+	 <z> -1.57 </z>
+	 </offsetr> -->
+    <physics>
+      <mass> 0 </mass>
+      <collisionShapeType> trimesh </collisionShapeType>
+    </physics>
+  </object>
+
+  <object>
+    <name>gate</name>
+    <file>models/gate.osg</file>
+    <position>
+      <x> 0.6 </x>
+      <y> 9 </y>
+      <z> -2.1 </z>
+    </position>
+    <orientation>
+      <r>1.57</r>
+      <p>0</p>
+      <y>0</y>
+    </orientation>
+    <physics>
+      <mass> 0 </mass>
+      <collisionShapeType> trimesh </collisionShapeType>
+    </physics>
+  </object>
+
+   <object>
+     <name>flare</name>
+     <file>models/flare.osg</file>
+     <position>
+       <x>10</x>
+       <y>14</y>
+       <z>-2.1</z>
+     </position>
+     <orientation>
+       <r>1.57</r>
+       <p>0</p>
+       <y>0</y>
+     </orientation>
+     <physics>
+       <mass> 0 </mass>
+       <collisionShapeType> trimesh </collisionShapeType>
+     </physics>
+   </object>
+
+   <object>
+     <name>bucket</name>
+     <file>models/bucket.osg</file>
+     <position>
+       <x>6</x>
+       <y>14.2</y>
+       <z>-2.1</z>
+     </position>
+     <orientation>
+       <r>1.57</r>
+       <p>0</p>
+       <y>0</y>
+     </orientation>
+     <physics>
+       <mass> 0 </mass>
+       <collisionShapeType> trimesh </collisionShapeType>
+     </physics>
+   </object>
+
+  <rosInterfaces>
+    <ROSOdomToPAT>
+      <topic> /dataNavigator </topic>
+      <vehicleName> sedna </vehicleName>
+    </ROSOdomToPAT>
+    <PATToROSOdom>
+      <topic> /sedna/sedna_odom </topic>
+      <vehicleName> sedna </vehicleName>
+    </PATToROSOdom>
+    <VirtualCameraToROSImage>
+      <cameraName>bowtech2</cameraName>
+      <imageTopic> /sedna/camera/front/image_raw</imageTopic>
+      <infoTopic> /sedna/frontCam_info </infoTopic>
+    </VirtualCameraToROSImage>
+    <VirtualCameraToROSImage>
+      <cameraName>bowtech1</cameraName>
+      <imageTopic> /sedna/camera/bottom/image_raw</imageTopic>
+      <infoTopic> /sedna/bottomCam_info </infoTopic>
+    </VirtualCameraToROSImage>
+    <RangeSensorToROSRange>
+      <name>sonarleft</name>
+      <topic> /sedna/sonarleft </topic>
+      <rate> 10 </rate>
+    </RangeSensorToROSRange>
+    <RangeSensorToROSRange>
+      <name>sonarright</name>
+      <topic> /sedna/sonarright </topic>
+      <rate> 10 </rate>
+    </RangeSensorToROSRange>
+    <ImuToROSImu>
+      <name>imu</name>
+      <topic>/imu/data</topic>
+      <rate>20</rate>
+    </ImuToROSImu>
+    <PressureSensorToROS>
+      <name>pressureSensor</name>
+      <topic>/sedna/pressure</topic>
+      <rate>5</rate>
+    </PressureSensorToROS>
+    <GPSSensorToROS>
+      <name>GPSSensor</name>
+      <topic>/sedna/gps</topic>
+      <rate>1</rate>
+    </GPSSensorToROS>
+    <DVLSensorToROS>
+      <name>DVLSensor</name>
+      <topic>/sedna/dvl</topic>
+      <rate>5</rate>
+    </DVLSensorToROS>
+  </rosInterfaces>
+</UWSimScene>

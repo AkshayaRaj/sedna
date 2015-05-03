@@ -81,7 +81,7 @@ class Buoys:
 
     previousCentroid=None
 
-   
+
 
     # Keep track of the previous centroids for matching
 
@@ -89,9 +89,9 @@ class Buoys:
 
     previousArea = None
 
-    found=None    
+    found=None
 
-    
+
 
     def rosimg2cv(self,ros_img):
 
@@ -105,15 +105,15 @@ class Buoys:
 
             rospy.loginfo("CvBridge error")
 
-            
+
 
         return frame
 
-    
 
-            
 
-        
+
+
+
 
 
 
@@ -123,15 +123,15 @@ class Buoys:
 
         #image= np.zeros((320,512,3), np.uint8)
 
-        
+
 
         self.imgData={'detected':False}
 
         self.bridge=CvBridge()
 	self.flare_pub=rospy.Publisher("/flare",flare)
-        self.camera_topic=rospy.get_param('~image', '/sedna/camera/front/image_raw')	
+        self.camera_topic=rospy.get_param('~image', '/sedna/camera/front/image_raw')
         self.image_filter_pub=rospy.Publisher("/vision/flare/image_filter",Image)
-	self.image_1_pub=rospy.Publisher("/vision/flare/thresh",Image)	
+	self.image_1_pub=rospy.Publisher("/vision/flare/thresh",Image)
 #	self.image_2_pub=rospy.Publisher("/vision/image_2",Image)
 #	self.image_3_pub=rospy.Publisher("/vision/image_3",Image)
 
@@ -144,11 +144,11 @@ class Buoys:
 
     	#self.found=False
 
-        
 
-      	self.flare_msg=flare() 
 
-    
+      	self.flare_msg=flare()
+
+
 
     def reconfigure(self,config,level):
 
@@ -170,24 +170,24 @@ class Buoys:
 
         #self.blur=config['blur']
 
-        print "configured" 
+        print "configured"
 
         return config
 
-        
-
-
-	        
-
-    
 
 
 
 
 
-    
 
-    
+
+
+
+
+
+
+
+
 
     def circles(self,cv_image):
 
@@ -200,9 +200,9 @@ class Buoys:
 
 
         #Added Code
-	
-        
-        '''	
+
+
+        '''
         inB, inG, inR = cv2.split(cv_image)
 
         avgR = np.mean(inR)
@@ -261,9 +261,9 @@ class Buoys:
 
 
 
-        outImg = cv2.merge((np.uint8(outB), np.uint8(outG), np.uint8(outR)))    
+        outImg = cv2.merge((np.uint8(outB), np.uint8(outG), np.uint8(outR)))
 	'''
-	
+
 
 
 	self.image=cv_image.copy()
@@ -301,15 +301,15 @@ class Buoys:
    #     mask1=cv2.inRange(ch[1],self.highThresh[0],self.lowThresh[0])
 
   #      mask2=cv2.inRange(ch[2],self.highThresh[1],self.lowThresh[1])
-	
+
 	mas=mask.copy()
 #	mas1=mask1.copy()
-#	mas2=mask2.copy()	
+#	mas2=mask2.copy()
 
         #ADDED
 	mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
         self.cir(mas,cv_image)
-	
+
 #        self.cir(mas1)
 
  #       self.cir(mas2)
@@ -332,20 +332,20 @@ class Buoys:
 	    self.image_1_pub.publish(self.bridge.cv2_to_imgmsg(mask_out, encoding="bgr8"))
 	    self.flare_pub.publish(self.flare_msg);
 	  #  self.image_2_pub.publish(self.bridge.cv2_to_imgmsg(mask_out2, encoding="bgr8"))
-         #   self.image_3_pub.publish(self.bridge.cv2_to_imgmsg(mask_out3, encoding="bgr8"))	
+         #   self.image_3_pub.publish(self.bridge.cv2_to_imgmsg(mask_out3, encoding="bgr8"))
         except CvBridgeError as e:
 
             rospy.logerr(e)
 
-              
+
 
     # ADDED FUNCTION
 
-    
+
 
     def cir(self,im,cv_image):
 
-	
+
         contours, hierachy = cv2.findContours(im, cv2.RETR_EXTERNAL,
 
                                               cv2.CHAIN_APPROX_NONE)
@@ -358,13 +358,13 @@ class Buoys:
 
 	if len(contours) > 0 :
 		self.flare_msg.possible=True
-	else : 
+	else :
 		self.flare_msg.possible=False
 
         if len(contours) > 0:
 
             largestContour = contours[0]
-	   
+
             mu = cv2.moments(largestContour)
 
             muArea = mu['m00']
@@ -377,7 +377,7 @@ class Buoys:
 
             #for yaw value
 
-            
+
 
             b=math.radians(30)
 
@@ -391,14 +391,14 @@ class Buoys:
 
             fin=math.atan(y*x/w)
 	    fin=math.degrees(fin)
-	    cv2.putText(self.image, str(fin), (30, 30),cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255))	
+	    cv2.putText(self.image, str(fin), (30, 30),cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255))
             #print ("final",fin)
 
             #print("degrees",math.degrees(fin))
 
-            self.flare_msg.heading_offset=int(fin)
-	    # CHANGED D SIGN	
-	    self.flare_msg.y_offset=(int)((-0.65)*(self.screen['width']/2 - centroidToBump[0]))
+            self.flare_msg.heading_offset=float(fin)
+	    # CHANGED D SIGN
+	    self.flare_msg.y_offset=(float)((-0.65)*(self.screen['width']/2 - centroidToBump[0]))
             #CENTER POINT VALUES
 
 
@@ -415,7 +415,7 @@ class Buoys:
 
         else:
 
-        # Find hough circles 
+        # Find hough circles
 
             circles = cv2.HoughCircles(binImg, cv2.cv.CV_HOUGH_GRADIENT, 1,
 
@@ -427,7 +427,7 @@ class Buoys:
 
                                    maxRadius = circleParams['maxRadius'])
 
-           
+
 
                 # Check if center of circles inside contours
 
@@ -469,9 +469,9 @@ class Buoys:
 
                              cv2.circle(img, newCentroid, circle[2], (255, 255, 0), 2)
 
-                             cv2.circle(img, newCentroid, 2, (255, 0, 255), 3)        
+                             cv2.circle(img, newCentroid, 2, (255, 0, 255), 3)
 
-           
+
 
                  # Find the circle with the largest radius
 
@@ -483,7 +483,7 @@ class Buoys:
 
                         rectArea = allAreaList[maxIndex]
 
-               
+
 
                         previousCentroid = centroidToBump
 
@@ -491,13 +491,13 @@ class Buoys:
 
                  '''
 
-        
 
-        
+
+
 
     def register(self):
 
-        
+
 
 #        self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
 
@@ -507,7 +507,7 @@ class Buoys:
 
         rospy.loginfo(self.camera_topic)
 
-        
+
 
     def unregister(self):
 
@@ -515,7 +515,7 @@ class Buoys:
 
         rospy.loginfo("Unregistered front camera")
 
-        
+
 
     def cameraCallback(self,ros_image):
 
@@ -537,7 +537,7 @@ class Buoys:
 
         self.circles(frame)
 
-        
+
 
 if __name__=="__main__":
 

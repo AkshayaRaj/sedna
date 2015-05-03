@@ -1,0 +1,22 @@
+<launch>
+	<node pkg="uwsim" name="uwsim" type="uwsim" args="--dataPath $(find simulation) --configfile $(find simulation)/scenes/sauv_scene.xml"/>
+
+	<node pkg="simulation" name="simulator" type="simulator" output="screen"/>
+	<node pkg="ui" name="tuner" type="tuner" />
+	<node pkg="keyboard" name="keyboard" type="keyboard" />
+
+
+
+        <!--launch PID controller-->
+        <include file="$(find launches)/controller.launch" />
+
+
+        <!--launch embedded systems-->
+        <!--include file="$(find launches)/arduino.launch" /-->
+
+     
+
+        <include file="$(find launches)/vision.launch" />
+
+</launch>
+

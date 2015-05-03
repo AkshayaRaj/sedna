@@ -1,0 +1,58 @@
+ <?xml version="1.0"?>
+  <robot name="sedna">
+    
+    <link name="base_link">
+      <visual>
+        <geometry>
+  	<box size="0.6 0.9 0.2" />
+        </geometry>
+        <material name="white">
+  	<color rgba="0.8 0.49 0.196 1" />
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+  	       <box size="4.8 3.9 2.8" />
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="head">
+        <visual>
+          <geometry>
+             <sphere radius="0.2"/>
+           </geometry>
+           <material name="white"/>
+        </visual>
+      </link>
+
+    <link name="body_link">
+      <visual>
+        <geometry>
+  	<cylinder length="1.0" radius="0.3" />
+        </geometry>
+        <origin xyz="0 0 0.2" rpy="1.57075 0 0" />
+        <material name="Feldspar">
+  	<color rgba="0.82 0.47 0.56 1" />
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+  	<cylinder length="0.8" radius="0.2" />
+        </geometry>
+        <origin xyz="0 0 0.2" rpy="1.57075 0 0" />
+      </collision>
+    </link>
+
+    <joint name="head_to_body" type="fixed">
+      <parent link="head" />
+      <child link="base_link" />
+        <origin xyz="0 0 0.1" />
+    </joint>
+
+    <joint name="body_to_base" type="fixed">
+      <parent link="base_link" />
+      <child link="body_link" />
+      <origin xyz="0 0 0.1" />
+    </joint>
+  </robot>

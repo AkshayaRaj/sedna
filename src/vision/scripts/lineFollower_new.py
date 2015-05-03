@@ -64,7 +64,7 @@ class Line:
 
     image=None
 
-    '''        
+    '''
 
     circleParams = {'minRadius':13, 'maxRadius': 0 }
 
@@ -106,9 +106,9 @@ class Line:
 
     previousArea = None
 
-    found=None    
+    found=None
 
-    
+
 
     def rosimg2cv(self,ros_img):
 
@@ -122,15 +122,15 @@ class Line:
 
             rospy.loginfo("CvBridge error")
 
-            
+
 
         return frame
 
-    
 
-            
 
-        
+
+
+
 
 
 
@@ -170,9 +170,9 @@ class Line:
         self.lineMsg.distance=0
 
 
-        
 
-    
+
+
 
     def reconfigure(self,config,level):
 
@@ -184,29 +184,29 @@ class Line:
 
         self.upperAreaThresh=config['upperAreaThresh']
 	self.areaThresh=config['areaThresh']
-	
-	
-        
+
+
+
 
         return config
 
-        
+
 
     def userQuit(self,signal,frame):
 
         rospy.loginfo("Buoy server is shutting down")
 
-        
-
-    
 
 
 
 
 
-    
 
-    
+
+
+
+
+
 
     def circles(self,cv_image):
 
@@ -224,7 +224,7 @@ class Line:
 
         grayImg = cv2.GaussianBlur(grayImg, ksize=(7, 7), sigmaX=0)
 
-        
+
 	'''
         # Calculate adaptive threshold value
 
@@ -242,7 +242,7 @@ class Line:
 
         grayImg = cv2.threshold(grayImg, self.thval, 255, cv2.THRESH_BINARY_INV)[1]
 
-        '''	
+        '''
 
         #th1 = cv2.threshold(cv_image,self.val1,self.val2,cv2.THRESH_BINARY_INV)[1]
 
@@ -315,7 +315,7 @@ class Line:
 
             points = np.array(cv2.cv.BoxPoints(rect))
 
-	    self.lineMsg.distance=int(centroid1 - self.screen['width']/2)
+	    self.lineMsg.distance=float(centroid1 - self.screen['width']/2)
 
 
             #Find the blackline heading
@@ -328,13 +328,13 @@ class Line:
 
             print "points1",points[1]
 
-            print "points0",points[0]    
+            print "points0",points[0]
 
             print "edge1",edge1
 
 
 
-            
+
 
             #Choose the vertical edge
 
@@ -371,7 +371,7 @@ class Line:
                 if centroid1 < screen['width'] / 2:
 
                     angle = 90
-	    self.lineMsg.heading=int(angle)
+	    self.lineMsg.heading=float(angle)
 
 
 
@@ -398,12 +398,12 @@ class Line:
             cv2.putText(out, str(angle), (30, 30),
 
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255))
-	
-      
+
+
 	#ath1=cv2.cvtColor(th1,cv2.cv.CV_GRAY2BGR)
 	#ath2=cv2.cvtColor(th2,cv2.cv.CV_GRAY2BGR)
 	#ath3=cv2.cvtColor(th3,cv2.cv.CV_GRAY2BGR)
-	
+
 
         try:
 
@@ -412,7 +412,7 @@ class Line:
            # self.image_fil1_pub.publish(self.bridge.cv2_to_imgmsg(ath2, encoding="bgr8"))
 
             self.image_fil2_pub.publish(self.bridge.cv2_to_imgmsg(out, encoding="bgr8"))
-	
+
             self.line_pub.publish(self.lineMsg);
 
         except CvBridgeError as e:
@@ -423,13 +423,13 @@ class Line:
 
 
 
-        
 
-        
+
+
 
     def register(self):
 
-        
+
 
         # self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
 
@@ -439,7 +439,7 @@ class Line:
 
         rospy.loginfo(self.camera_topic)
 
-        
+
 
     def unregister(self):
 
@@ -447,7 +447,7 @@ class Line:
 
         rospy.loginfo("Unregistered front camera")
 
-        
+
 
     def cameraCallback(self,ros_image):
 
@@ -469,7 +469,7 @@ class Line:
 
         self.circles(frame)
 
-        
+
 
 if __name__=="__main__":
 

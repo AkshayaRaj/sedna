@@ -31,7 +31,7 @@ class Line:
     highThresh=np.array([0,0,0])
     screen={'width':320,'height':240}
     image=None
-    '''        
+    '''
     circleParams = {'minRadius':13, 'maxRadius': 0 }
     houghParams = (74, 11)
     allCentroidList = []
@@ -52,19 +52,19 @@ class Line:
     # Keep track of the previous centroids for matching
     previousCentroid = None
     previousArea = None
-    found=None    
-    
+    found=None
+
     def rosimg2cv(self,ros_img):
         try:
             frame=self.bridge.imgmsg_to_cv2(ros_image,ros_image.encoding)
         except CvBridgeError as e:
             rospy.logerr(e)
             rospy.loginfo("CvBridge error")
-            
+
         return frame
-    
-            
-        
+
+
+
 
     def __init__(self):
         self.dyn_reconfigure_server=DynServer(Config,self.reconfigure)
@@ -84,9 +84,9 @@ class Line:
 	self.lineMsg.possible=False
 	self.lineMsg.heading=0
 	self.lineMsg.distance=0
-        
-        
-    
+
+
+
     def reconfigure(self,config,level):
         rospy.loginfo('Reconfigure request !')
         self.val = config['val']
@@ -94,23 +94,23 @@ class Line:
         self.areaThresh = config['areaThresh']
         self.upperAreaThresh = config['upperAreaThresh']
         self.blur=config['blur']
-        
+
         return config
-        
+
     def userQuit(self,signal,frame):
         rospy.loginfo("Buoy server is shutting down")
-        
-    
 
 
-    
-    
+
+
+
+
     def circles(self,cv_image):
         cv_image=cv2.resize(cv_image,dsize=(self.screen['width'],self.screen['height']))
         #if self.blur:
         #    cv_image=cv2.GaussianBlur(cv_image,ksize=[5,5],sigmaX=0)
         #screen = { 'width' : 640, 'height' : 480 }
-        
+
 	grayImg = cv2.cvtColor(cv_image, cv2.cv.CV_BGR2GRAY)
         grayImg = cv2.resize(grayImg, dsize=(self.screen['width'], self.screen['height']))
         grayImg = cv2.GaussianBlur(grayImg, ksize=(7, 7), sigmaX=0)
@@ -154,12 +154,12 @@ class Line:
                 centroid2 = centroidy
                 #rectData['rect'] = cv2.minAreaRect(contour)
                 rect = cv2.minAreaRect(contour)
-                
+
         if maxArea > 0:
         	self.lineMsg.possible=True
         else :
         	self.lineMsg.possible=False
-        
+
         if maxArea > 0:
             #rectData['detected'] = True
             points = np.array(cv2.cv.BoxPoints(rect))
@@ -169,10 +169,10 @@ class Line:
             edge2 = points[2] - points[1]
 
             print "points1",points[1]
-            print "points0",points[0]    
+            print "points0",points[0]
             print "edge1",edge1
-            
-            
+
+
             #Choose the vertical edge
             if cv2.norm(edge1) > cv2.norm(edge2):
                 edge1[1] = edge1[1] if edge1[1] != 0.0 else math.copysign(0.01, edge1[1])
@@ -191,9 +191,9 @@ class Line:
             elif angle == -90:
                 if centroid1 < screen['width'] / 2:
                     angle = 90
-	    
-	    self.lineMsg.heading=int(angle)
-	    
+
+	    self.lineMsg.heading=float(angle)
+
             #Testing
             centerx = int(centroid1)
             centery = int(centroid2)
@@ -206,32 +206,32 @@ class Line:
 
             cv2.putText(cv_image, str(angle), (30, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255))
-	    
-	    #grayImg=cv2.cvtColor(grayImg,cv2.COLOR_GRAY2BGR)	
-        
+
+	    #grayImg=cv2.cvtColor(grayImg,cv2.COLOR_GRAY2BGR)
+
         try:
             self.image_filter_pub.publish(self.bridge.cv2_to_imgmsg(out, encoding="bgr8"))
             self.image_thresh_pub.publish(self.bridge.cv2_to_imgmsg(cv_image,encoding="bgr8"))
             self.line_pub.publish(self.lineMsg);
-	
-	
+
+
 	except CvBridgeError as e:
             rospy.logerr(e)
 
 
-        
-        
+
+
     def register(self):
-        
+
         # self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
         self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
         rospy.loginfo("Subscribed to front camera")
         rospy.loginfo(self.camera_topic)
-        
+
     def unregister(self):
         self.image_sub.unregister()
         rospy.loginfo("Unregistered front camera")
-        
+
     def cameraCallback(self,ros_image):
         #rospy.loginfo("in cam")
         #cv_image=self.rosimg2cv(ros_image)
@@ -242,7 +242,7 @@ class Line:
             rospy.logerr(e)
             rospy.loginfo("CvBridge error")
         self.circles(frame)
-        
+
 if __name__=="__main__":
     rospy.init_node("line_detector")
     buoys=Line()

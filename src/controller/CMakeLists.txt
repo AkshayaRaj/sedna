@@ -128,6 +128,10 @@ add_executable(pid_client src/actionClient.cpp)
 target_link_libraries(pid_client 
   ${catkin_LIBRARIES}
 )
+
+#add_executable(keyboard_control src/keyboard_control.cpp)
+#target_link_libraries(keyboard_control ${catkin_LIBRARIES})
+
 add_dependencies(pid_client $(controller_EXPORTED_TARGETS))
 
 

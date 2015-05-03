@@ -1,3 +1,3 @@
 bool possible
-int16 heading
-int16 distance
+float32 heading
+float32 distance
