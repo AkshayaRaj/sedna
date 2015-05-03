@@ -119,7 +119,7 @@ void calculate_pose(){
 	odom.pose.pose.orientation.z=0.0;
 	odom.pose.pose.orientation.w=1;
 
-	odom.twist.twist.linear.x=(double)fmap(sidemove_velocity_teleop,-255,255,-SIDEMOVE_VEL_MAX,SIDEMOVE_VEL_MAX);
+	odom.twist.twist.linear.x=(double)fmap(sidemove_velocity_teleop- pid.sidemove.total,-255,255,-SIDEMOVE_VEL_MAX,SIDEMOVE_VEL_MAX);
 	odom.twist.twist.linear.y=(double)fmap(thruster_speed.speed1,-255,255,-FORWARD_VEL_MAX,FORWARD_VEL_MAX);
 	odom.twist.twist.linear.z=(double)fmap(thruster_speed.speed3,-400,400,-DEPTH_VEL_MAX,DEPTH_VEL_MAX);
 
