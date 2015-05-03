@@ -13,6 +13,7 @@
 #include<srmauv_msgs/thruster.h>
 #include <srmauv_msgs/pid_info.h>
 #include<underwater_sensor_msgs/Pressure.h>
+#include <srmauv_msgs/teleop_sedna.h>
 
 
 
@@ -22,6 +23,7 @@ void getPressure(const underwater_sensor_msgs::Pressure &msg);
 void getThruster(const srmauv_msgs::thruster &msg);
 void getPID(const srmauv_msgs::pid_info &msg);
 void calculate_pose();
+void getTeleop(const srmauv_msgs::teleop_sedna::ConstPtr &msg);
 
 
 srmauv_msgs::depth depthVal;
@@ -32,11 +34,15 @@ nav_msgs::Odometry odom;
 ros::Subscriber thrusterSub;
 ros::Subscriber pressureSub;
 ros::Subscriber pid_infoSub;
+ros::Subscriber teleopSub;
 
 ros::Publisher positionPub;
 ros::Publisher pressurePub;
 
 double lowpass_depth;
+double sidemove_velocity_teleop;
+
+
 
 
 int main(int argc,char** argv){
@@ -47,6 +53,7 @@ int main(int argc,char** argv){
 	thrusterSub=nh.subscribe("/thruster_speed",1000,getThruster);
   pressureSub=nh.subscribe("/sedna/pressure",1000,getPressure);
 	pid_infoSub=nh.subscribe("/pid_info",1000,getPID);
+	teleopSub=nh.subscribe("/teleop_sedna",1000,getTeleop);
 
 	pressurePub=nh.advertise<srmauv_msgs::depth>("/pressure_data",100);
 	positionPub=nh.advertise<nav_msgs::Odometry>("/dataNavigator",100);
@@ -112,7 +119,7 @@ void calculate_pose(){
 	odom.pose.pose.orientation.z=0.0;
 	odom.pose.pose.orientation.w=1;
 
-	odom.twist.twist.linear.x=0;
+	odom.twist.twist.linear.x=(double)fmap(sidemove_velocity_teleop,-255,255,-SIDEMOVE_VEL_MAX,SIDEMOVE_VEL_MAX);
 	odom.twist.twist.linear.y=(double)fmap(thruster_speed.speed1,-255,255,-FORWARD_VEL_MAX,FORWARD_VEL_MAX);
 	odom.twist.twist.linear.z=(double)fmap(thruster_speed.speed3,-400,400,-DEPTH_VEL_MAX,DEPTH_VEL_MAX);
 
@@ -129,6 +136,15 @@ odom.pose.covariance[i]=0;
 }
 
 
+
+
+void getTeleop(const srmauv_msgs::teleop_sedna::ConstPtr &msg){
+	sidemove_velocity_teleop=msg->sidemove_speed;
+
+
+
+
+}
 
 void getPID(const srmauv_msgs::pid_info &msg){
 	pid=msg;

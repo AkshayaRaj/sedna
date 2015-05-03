@@ -2,9 +2,9 @@
 
 
 #define NORTH -150
-#define DEPTH_SAUVC 340
-#define DEPTH_BUCKET 290
-#define DEPTH_FLARE 354
+#define DEPTH_SAUVC 20
+#define DEPTH_BUCKET 20
+#define DEPTH_FLARE 20
 #include <srmauv_msgs/teleop_sedna.h>
 #include <ros/ros.h>
 #include<keyboard/Key.h>
