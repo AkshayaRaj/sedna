@@ -61,7 +61,7 @@ int limit(int value, int lower, int upper);
 void keyUp(const keyboard::KeyConstPtr& key);
 void keyDown(const keyboard::KeyConstPtr& key);
 void getPressure(const srmauv_msgs::depth &msg);
-void getOrientation(const sensor_msgs::Imu::ConstPtr &msg);
+
 void getHeading(const geometry_msgs::Pose2D::ConstPtr& msg);
 void setTeleop(const srmauv_msgs::goal::ConstPtr& msg);
 void setCurrent();
@@ -106,7 +106,7 @@ int main(int argc,char** argv){
   keyDown_sub=nh.subscribe("/keyboard/keydown",1000,keyDown);
   keyUp_sub=nh.subscribe("/keyboard/keyup",1000,keyUp);
   pressureSub=nh.subscribe("/pressure_data",1000,getPressure);
-  imuSub=nh.subscribe("/imu/data",1000,getOrientation);
+  imuSub=nh.subscribe("/imu/data",1000,getImu);
   headingSub=nh.subscribe("/imu/HeadingTrue_degree",1000,getHeading);
   teleopSetter=nh.subscribe("/teleop_set",1000,setTeleop);
   lineSub=nh.subscribe("/line_follower",1000,getLine);
@@ -166,7 +166,7 @@ if(!inSidemove)
 //dropperPub.publish(dropBall);
   if(inLine && line.possible){
    // ******************* subject to change +/- :
-    teleop.heading_setpoint=-yaw + line.heading;
+    teleop.heading_setpoint=yaw + line.heading;
     teleop.sidemove_input=line.distance;
 	if(!inSidemove)
 		teleop.sidemove_input=0;
@@ -207,9 +207,6 @@ void getPressure(const srmauv_msgs::depth &msg){
 }
 
 
-void getOrientation(const sensor_msgs::Imu::ConstPtr &msg){
-
-}
 
 void getHeading(const geometry_msgs::Pose2D::ConstPtr& msg){
 //  yaw=msg->theta;
@@ -222,7 +219,7 @@ void getImu(const sensor_msgs::Imu::ConstPtr& msg){
   tf::quaternionMsgToTF(msg->orientation,q);
 // tf::Matrix3x3(q).getRPY(roll,pitch,yaw);
  // tf::Matrix3x3(q).getEulerYPR(yaw,pitch,roll);
-  tf::Matrix3x3(q).getEulerZYX(yaw,pitch,roll);
+  tf::Matrix3x3(q).getEulerZYX(heading,pitch,roll);
 //  tf::Matrix3x3(q).
   yaw=heading/M_PI*180;
 
