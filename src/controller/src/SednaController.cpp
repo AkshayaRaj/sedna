@@ -369,6 +369,16 @@ int main (int argc,char **argv){
 		                        rollPID.clearIntegrator();
 		                }
 
+		if(teleop.tune){
+			 ctrl.depth_setpoint=as.getDepth();
+			 ctrl.heading_setpoint=as.getHeading();
+   			// ctrl.pitch_setpoint=msg->pitch_setpoint;
+  			 //ctrl.roll_setpoint=msg->roll_setpoint;
+			as.updateInfo(0,0,0,0,ctrl.heading_input,ctrl.depth_input);
+
+			
+		}
+
 		setHorizontalThrustSpeed(heading_output,forward_output,sidemove_output);
 		setVerticalThrustSpeed(depth_output,pitch_output,roll_output);
 

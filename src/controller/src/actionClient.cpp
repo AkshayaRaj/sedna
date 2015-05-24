@@ -16,7 +16,7 @@ int main(int argc,char **argv)
  ROS_INFO("Action server started, sending goal");
 
  srmauv_msgs::ControllerGoal goal;
- goal.depth_setpoint=200;
+ goal.depth_setpoint=-50;
  goal.heading_setpoint=50;
 
  ac.sendGoal(goal);
