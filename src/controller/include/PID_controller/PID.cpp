@@ -1,3 +1,5 @@
+//#define NEW_PID
+
 #include "PID.h"
 #include <ros/ros.h>
 #include <math.h>
@@ -20,7 +22,7 @@ namespace srmauv{
 		Td=D;
 	}
 
-	
+
         double sednaPID::getProportional() {
 		return _proportional;
 	}
@@ -46,7 +48,7 @@ namespace srmauv{
 		Kp=P;
 		Ti=I;
 		Td=D;
-		
+
 		_integral=0;
 		_derivative=0;
 
@@ -65,45 +67,37 @@ namespace srmauv{
 	double  sednaPID::actuatorConstrain(double val){
 		//this fn will return  val  provided
 		//that  actMin<val<actMax else it will impose a restriction on the value returned
-		
+
 		double actuatorConstrain=0;
 		if (val<actMin)
 			actuatorConstrain=actMin;
 		else if(val>actMax)
 			actuatorConstrain=actMax;
-		else 	
+		else
 			actuatorConstrain=val;
 		return actuatorConstrain;
 	}
 
 	double sednaPID::computePID(double setpoint,double input){
+
+		#ifndef NEW_PID
 	 	ros::Time nowTime=ros::Time::now();
 		double output;
 		double dt=nowTime.nsec-oldTime.nsec;
 
 		//double Tt=sqrt(Ti*Td);
-
-		//oldTime.nsec>nowTime.nsec ? dt=(nowTime.nsec+1000000000-oldTime.nsec)/1000000 :
-		//			dt=nowTime.nsec/1000000;
-
+		//oldTime.nsec>nowTime.nsec ? dt=(nowTime.nsec+1000000000-oldTime.nsec)/1000000 :	dt=nowTime.nsec/1000000;
 		_proportional=Kp*(setpoint-input);
-
 		//the following is setpoint weighting and bandwidth limitation for derivative:
 //		_derivative=(Td/(Td+N*dt))*(_derivative-Kp*N*(input-inputOld));
 		_derivative=0;
-			
 		_total=_proportional+_integral;
-
-		//apply constrains to output: 
 		output=actuatorConstrain(_total);
 		 ROS_DEBUG("n: %s P: %2.f, I: %2.f, D: %2.f, dt: %2.2f, err: %6.2f",_name.c_str(),_proportional,_integral, _derivative,dt,setpoint - input);
-
-		
-		//Integral with wind-up protection: 
+		//Integral with wind-up protection:
 		if(Ti!=0){
 //		  _integral+=(Kp*dt*(setpoint-input))/Ti+ (output-_total)*dt/Tt ;
-		  _integral+=(Kp*(setpoint-input))/Ti;
-}
+		  _integral+=(Kp*(setpoint-input))/Ti;}
 		else
 				_integral=0; //incase Ti is reconfgured
 		if (_integral>actMax)
@@ -111,13 +105,26 @@ namespace srmauv{
 		else if(_integral<actMin){
 		  _integral=actMin;
 		}
-
 		oldTime=nowTime;
 		inputOld=input;
+
+		#endif
+
+
+		#ifdef NEW_PID
+
+
+
+		#endif
+
+
+
+
+
 		return output;
 		}
-		
-		
+
+
 	double sednaPID::wrapAngle360(double error, double heading){
 		if(error>180)
 			heading+=360;
@@ -140,13 +147,6 @@ namespace srmauv{
 
 
 
-		 
-		
-		
-
-
-
-	
 
 
 
@@ -154,22 +154,29 @@ namespace srmauv{
 
 
 
- 
-				
 
 
 
 
-	
-		
-		
-		
-		
-	
 
 
-	
-		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
