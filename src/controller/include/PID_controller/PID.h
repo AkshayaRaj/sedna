@@ -6,7 +6,7 @@
 #include "math.h"
 #include <stdio.h>
 #include <string>
-
+/*
 float prev_time = 0.0;
 float delta_t = 0.0;
 float error_integral = 0.0;
@@ -16,7 +16,7 @@ vector<float> error(3);
 vector<float> filtered_error(3);
 vector<float> error_deriv(3);
 vector<float> filtered_error_deriv(3);
-
+*/
 
 namespace srmauv{
 
