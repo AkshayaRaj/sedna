@@ -1,3 +1,7 @@
-bool possible
-int16 heading_offset 
-int16 y_offset
+bool possible_red
+bool possible_green
+int16 x_offset_green
+int16 y_offset_green
+int16 x_offset_red 
+int16 y_offset_red
+

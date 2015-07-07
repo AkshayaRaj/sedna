@@ -156,15 +156,15 @@ class Buoys:
 
        # self.lowThresh[0]=config['loL']
 
-        #self.lowThresh[1]=config['loU']
+        self.lowThresh[1]=config['hiGreen']
 
-        self.lowThresh[2]=config['hiV']
+        self.lowThresh[2]=config['hiRed']
 
         #self.highThresh[0]=config['hiL']
 
-        #self.highThresh[1]=config['hiU']
+        self.highThresh[1]=config['loGreen']
 
-        self.highThresh[2]=config['loV']
+        self.highThresh[2]=config['loRed']
 
         self.minContourArea=config['minContourArea']
 
@@ -296,19 +296,20 @@ class Buoys:
         ch=cv2.split(enhancedImg)
 	#print "value",self.highThresh[2]
 
-        mask = cv2.inRange(ch[2],self.highThresh[2],self.lowThresh[2])
+        mask = cv2.inRange(ch[1],self.highThresh[2],self.lowThresh[2])
 
    #     mask1=cv2.inRange(ch[1],self.highThresh[0],self.lowThresh[0])
 
-  #      mask2=cv2.inRange(ch[2],self.highThresh[1],self.lowThresh[1])
+        mask2=cv2.inRange(ch[2],self.highThresh[1],self.lowThresh[1])
 
 	mas=mask.copy()
 #	mas1=mask1.copy()
-#	mas2=mask2.copy()
+	mas2=mask2.copy()
 
         #ADDED
 	mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
-        self.cir(mas,cv_image)
+        self.cir(mas,cv_image,1)
+	self.cir(mas2,cv_image,2)
 
 #        self.cir(mas1)
 
@@ -343,7 +344,7 @@ class Buoys:
 
 
 
-    def cir(self,im,cv_image):
+    def cir(self,im,cv_image,dis):
 
 
         contours, hierachy = cv2.findContours(im, cv2.RETR_EXTERNAL,
@@ -357,9 +358,15 @@ class Buoys:
         contours = sorted(contours, key=cv2.contourArea, reverse=True) # Sort by largest contour
 
 	if len(contours) > 0 :
-		self.flare_msg.possible=True
+		if(dis==1):
+			self.flare_msg.possible_red=True
+		if(dis==2):
+			self.flare_msg.possible_green=True
 	else :
-		self.flare_msg.possible=False
+	        if(dis==1):
+			self.flare_msg.possible_red=False
+		if(dis==2):
+			self.flare_msg.possible_green=False
 
         if len(contours) > 0:
 
@@ -395,13 +402,18 @@ class Buoys:
             #print ("final",fin)
 
             #print("degrees",math.degrees(fin))
+	    if(dis==1):	
+		 self.flare_msg.x_offset_red=float(fin)
+	  	  # CHANGED D SIGN
+	   	 self.flare_msg.y_offset_red=(float)((-0.65)*(self.screen['width']/2 - centroidToBump[0]))
+           	 #CENTER POINT VALUES
 
-            self.flare_msg.heading_offset=float(fin)
-	    # CHANGED D SIGN
-	    self.flare_msg.y_offset=(float)((-0.65)*(self.screen['width']/2 - centroidToBump[0]))
-            #CENTER POINT VALUES
-
-
+	    if(dis==2):
+                 self.flare_msg.x_offset_green=float(fin)
+                  # CHANGED D SIGN
+                 self.flare_msg.y_offset_green =(float)((-0.65)*(self.screen['width']/2 - centroidToBump[0]))
+                 #CENTER POINT VALUES
+	
 
 
 	'''
@@ -546,3 +558,4 @@ if __name__=="__main__":
     buoys=Buoys()
 
     rospy.spin()
+
