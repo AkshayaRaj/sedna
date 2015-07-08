@@ -1,0 +1,3 @@
+qualify:
+A gate with two vertical arms covered in orange duct tape. Lowered just below the surface
+gate_x_offset
