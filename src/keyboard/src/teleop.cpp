@@ -22,12 +22,14 @@
 #include <srmauv_msgs/bucket.h>
 #include <sensor_msgs/Imu.h>
 #include <srmauv_msgs/missions.h>
+#include <srmauv_msgs/gate.h>
 
 srmauv_msgs::teleop_sedna teleop;
 srmauv_msgs::depth depth;
 srmauv_msgs::line line;
 srmauv_msgs::buoy buoy;
 srmauv_msgs::bucket bucket;
+srmauv_msgs::gate gate;
 srmauv_msgs::missions missions;
 keyboard::Key key;
 std_msgs::Bool inLineBool;
@@ -103,12 +105,10 @@ int main(int argc,char** argv){
   teleop.tune=false;
   teleop.depth_enable=false;
   teleop.pid_enable=false;
-  inLineBool.data=false;
-  inBuoyBool.data=false;
-  inBucketBool.data=false;
   teleop.depth_setpoint=DEPTH_SAUVC;
   teleop.heading_setpoint=north;
   dropBall.data=false;
+  stop_missions();
 
   keyDown_sub=nh.subscribe("/keyboard/keydown",1000,keyDown);
   keyUp_sub=nh.subscribe("/keyboard/keyup",1000,keyUp);
@@ -121,10 +121,7 @@ int main(int argc,char** argv){
   bucketSub=nh.subscribe("/bucket",1000,getBucket);
   imuSub=nh.subscribe("/imu/data",1000,getImu);
 
-  inLinePub=nh.advertise<std_msgs::Bool>("/inLine",100);
-  inBuoyPub=nh.advertise<std_msgs::Bool>("/inBuoy",100);
-  inBucketPub=nh.advertise<std_msgs::Bool>("/inBucket",100);
-  dropperPub=nh.advertise<std_msgs::Bool>("/dropper",100);
+  missionsPub=nh.advertise<srmauv_msgs::missions>("/missions",100);
   teleopPub=nh.advertise<srmauv_msgs::teleop_sedna>("/teleop_sedna",1000);
 
   ROS_INFO("Teleop dispatcher initialized..");
@@ -141,6 +138,7 @@ int main(int argc,char** argv){
 
     runMission();
     teleopPub.publish(teleop);
+    missionsPub.publish(missions);
     ROS_INFO("Spinning..");
 
 
@@ -189,7 +187,6 @@ void stop_bottom_missions(){
 
 void runMission(){
 
-
   //dropperPub.publish(dropBall);
   if(missions.guide && line.possible){
 
@@ -199,7 +196,7 @@ void runMission(){
   }
 
 
-  if (missions.buoy_red && buoy.possible_red){
+     if (missions.buoy_red && buoy.possible_red){
 
     teleop.sidemove_input=buoy.x_offset_red;
     teleop.depth_setpoint=DEPTH_BUOY;
@@ -246,9 +243,7 @@ void getImu(const sensor_msgs::Imu::ConstPtr& msg){
 }
 
 void getLine(const srmauv_msgs::line::ConstPtr&msg){
-  line.possible=msg->possible;
-  line.heading=msg->heading;
-  line.distance=msg->distance;
+  line=*msg;
 }
 
 void getBuoy(const srmauv_msgs::buoy::ConstPtr&msg){
