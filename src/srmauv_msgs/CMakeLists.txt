@@ -62,9 +62,10 @@ geometry_msgs
 	teleop_sedna.msg
 	goal.msg
 	line.msg
-	flare.msg
+	buoy.msg
 	bucket.msg
 	missions.msg
+  gate.msg
  )
 
 ## Generate services in the 'srv' folder
