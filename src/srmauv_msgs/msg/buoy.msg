@@ -1,0 +1,6 @@
+bool possible_red
+bool possible_green
+float32 x_offset_green
+float32 y_offset_green
+float32 x_offset_red
+float32 y_offset_red

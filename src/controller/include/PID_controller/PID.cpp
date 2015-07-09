@@ -116,13 +116,18 @@ namespace srmauv{
 		double dt=nowTime.nsec -oldTime.nsec;
 		double output;
 		double Tt=sqrt(Ti*Td);
-		if (oldTime.nsec>nowTime.nsec) dt=(nowTime.nsec+1000000000 - oldTime.nsec)/1000000;
-		else dt=nowTime.nsec -oldTime.nsec/1000000;
+
+
+		if(oldTime.nsec > nowTime.nsec) dt = (nowTime.nsec + 1000000000 - oldTime.nsec)/1000000;
+			else    dt = (nowTime.nsec - oldTime.nsec)/1000000;
 
 
 		_proportional=Kp*(setpoint-input);
 		//the following is setpoint weighting and bandwidth limitation for derivative:
-		_derivative=(Td/(Td + N*dt))*(_derivative - Kp*N*(input-inputOld));
+		_derivative = (Td/(Td + N*dt))*(_derivative - Kp*N*(inputOld - input));
+
+
+	//	_derivative=Td*100000000*(inputOld-input)/dt;
 
 		_total=_proportional+_integral+_derivative;
 		output=actuatorConstrain(_total);
