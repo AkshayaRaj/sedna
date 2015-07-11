@@ -1,24 +1,23 @@
-#define TH1 4
+#define TH1 2
 #define TH2 3
-#define TH3 8
+#define TH3 6
 #define TH4 7
-#define TH5 9
-#define TH6 6
-#define TH7 2
+#define TH5 8
+#define TH6 9
+#define TH7 4
 #define TH8 5
 
-#define TH1_F 30
-#define TH1_R 33
+#define TH1_F 22
+#define TH1_R 25
 
 #define TH2_F 26
 #define TH2_R 29
 
-#define TH7_F 22
-#define TH7_R 25
+#define TH7_F 30
+#define TH7_R 33
 
 #define TH8_F 35
 #define TH8_R 37
-
 
 
 #define RELAY1 38
