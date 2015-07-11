@@ -16,8 +16,8 @@
 #define TH7_F 30
 #define TH7_R 33
 
-#define TH8_F 35
-#define TH8_R 37
+#define TH8_F 37
+#define TH8_R 35
 
 
 #define RELAY1 38
@@ -27,8 +27,8 @@
 
 
 
-#define PRESSURE_1 7 // US3000 pressure sensor
-#define PRESSURE_2 2  //Switzer pressure sensor
+#define PRESSURE_1 3 // US3000 pressure sensor
+#define PRESSURE_2 7  //Switzer pressure sensor
 #define LEAK_SENSOR 0
 #define LCD 44
 

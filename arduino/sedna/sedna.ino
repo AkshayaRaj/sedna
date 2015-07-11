@@ -196,7 +196,7 @@ void runThrusters(){
   
 }
 void initPressure(){
-  pressure=analogRead(PRESSURE_1);
+  pressure=analogRead(PRESSURE_2);
   delay(1000);
 }
 
@@ -215,7 +215,7 @@ void readPressure(){
 
 void readWater(){
  if(analogRead(LEAK_SENSOR)<WATER_LEAK_THRESH) {
-   emergencyMode();
+  // emergencyMode();
  }
 }
 void enableThrusters(){
