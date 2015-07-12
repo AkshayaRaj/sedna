@@ -1,2 +1,2 @@
 bool possible
-float32 x_offest
+float32 x_offset
