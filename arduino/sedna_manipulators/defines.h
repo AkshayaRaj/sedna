@@ -1,7 +1,7 @@
-#define TORPEDO 12
-#define DROPPER  13
-#define NEOPIXEL 5
-#define ACT_DELAY 1000
 
-#define DROPPER 8
-#define TORPEDO 9
+#define NEOPIXEL 9
+#define ACT_DELAY 1000
+#define LCD 7
+
+#define DROPPER 2
+#define TORPEDO 4

@@ -37,7 +37,8 @@ ros::Subscriber<std_msgs::Bool> dropper_sub("dropper",dropperCallback);
 void setup(){
 
   
-  
+  pinMode(LCD,OUTPUT);
+  digitalWrite(LCD,LOW);
   nh.initNode();
   initLights();
   initMan();
@@ -61,7 +62,7 @@ void loop(){
 void initLights(){
    strip.begin();
   //strip.show(); // Initialize all pixels to 'off'
-  //  colorWipeFull(strip.Color(0, 255, 0), 50); // Green
+    colorWipeFull(strip.Color(0, 255, 0), 50); // Green
   blink(0,255,0,2);
   
 }

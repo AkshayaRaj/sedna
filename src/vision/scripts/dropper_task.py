@@ -80,7 +80,7 @@ class Drops:
 
     previousCentroid=None
 
-   
+
 
     # Keep track of the previous centroids for matching
 
@@ -88,9 +88,9 @@ class Drops:
 
     previousArea = None
 
-    found=None    
+    found=None
 
-    
+
 
     def rosimg2cv(self,ros_img):
 
@@ -104,15 +104,15 @@ class Drops:
 
             rospy.loginfo("CvBridge error")
 
-            
+
 
         return frame
 
-    
 
-            
 
-        
+
+
+
 
 
 
@@ -148,15 +148,15 @@ class Drops:
         self.bucketMsg.y_offset=0
 
 
-        
 
-    
+
+
 
     def reconfigure(self,config,level):
 
         rospy.loginfo('Reconfigure request !')
-     
-     
+
+
         self.lowThresh[2]=config['loV']
 
 #        self.highThresh[0]=config['hiL']
@@ -169,11 +169,11 @@ class Drops:
 
   #      self.blur=config['blur']
 
-	print "Reconfigured woo hoo"        
+	print "Reconfigured woo hoo"
 
         return config
 
-        
+
 
     def userQuit(self,signal,frame):
 
@@ -181,7 +181,7 @@ class Drops:
 
         raise SystemExit('Exiting')
 
-    
+
 
 
 
@@ -207,22 +207,22 @@ class Drops:
 
             area = cv2.contourArea(contours[0])
 
-            print area 
-            
+            print area
+
 	    mu = cv2.moments(contours[0],False)
-	    muArea = mu['m00']		    
-	
+	    muArea = mu['m00']
+
 	    d=(int(mu['m10']/muArea))
             centroidx = mu['m10'] / mu['m00']
-	    print centroidx		
+	    print centroidx
             centroidy = mu['m01'] / mu['m00']
 	    print centroidy
-	    cv2.circle(cv_image,(int(centroidx),int(centroidy)),2,(0,0,255),13)	 
+	    cv2.circle(cv_image,(int(centroidx),int(centroidy)),2,(0,0,255),13)
 	    self.bucketMsg.x_offset=int(centroidx - self.screen['width']/2)
 
 	    # MAY NEED TO CHANGE SIGN : !!
 	    self.bucketMsg.y_offset=int(centroidy - self.screen['height']/2)
-	    '''		
+	    '''
 	    b=math.radians(60)
 
             y=math.tan(b)
@@ -239,24 +239,24 @@ class Drops:
 
             #print("degrees",math.degrees(fin))
 
-            '''	
-	
-             
-  
+            '''
+
+
+
             if(area<40000 and area>self.minContourArea and len(contours)>0):
 
                 x=1
 
                 print bool(x)
 		self.bucketMsg.possible=True
-	    
+
             else :
-		self.bucketMsg.possible=False		
+		self.bucketMsg.possible=False
 
 
-    
 
-    
+
+
 
     def circles(self,cv_image):
 
@@ -266,7 +266,7 @@ class Drops:
 
         #    cv_image=cv2.GaussianBlur(cv_image,ksize=[5,5],sigmaX=0)
 
-        
+
 
         channels=cv2.split(cv_image)
 
@@ -297,15 +297,15 @@ class Drops:
         ch=cv2.split(enhancedImg)
 	print self.highThresh[2]
 	print self.lowThresh[2]
-	
+
         mask = cv2.inRange(ch[2],self.highThresh[2],self.lowThresh[2])
 
         #mask1=cv2.inRange(ch[1],self.highThresh[0],self.lowThresh[0])
 
         #mask2=cv2.inRange(ch[2],self.highThresh[1],self.lowThresh[1])
-	
+
 	mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
-        
+
 
 	mas=mask.copy()
 	self.cir(mas,cv_image)
@@ -319,9 +319,9 @@ class Drops:
        # mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
 
         try:
-		
+
             self.image_filter_pub.publish(self.bridge.cv2_to_imgmsg(mask_out, encoding="bgr8"))
-	    self.image_test_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, encoding="bgr8"))	
+	    self.image_test_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, encoding="bgr8"))
 	    self.bucket_pub.publish(self.bucketMsg);
 
         except CvBridgeError as e:
@@ -332,13 +332,13 @@ class Drops:
 
 
 
-        
 
-        
+
+
 
     def register(self):
 
-        
+
 
 #        self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
 
@@ -348,7 +348,7 @@ class Drops:
 
         rospy.loginfo(self.camera_topic)
 
-        
+
 
     def unregister(self):
 
@@ -356,7 +356,7 @@ class Drops:
 
         rospy.loginfo("Unregistered front camera")
 
-        
+
 
     def cameraCallback(self,ros_image):
 
@@ -380,7 +380,7 @@ class Drops:
 
 	rospy.loginfo(self.lowThresh[0])
 
-        
+
 
 if __name__=="__main__":
 

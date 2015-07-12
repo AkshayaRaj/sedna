@@ -123,7 +123,7 @@ int main(int argc,char** argv){
 
   missionsPub=nh.advertise<srmauv_msgs::missions>("/missions",100);
   teleopPub=nh.advertise<srmauv_msgs::teleop_sedna>("/teleop_sedna",1000);
-
+  dropperPub=nh.advertise<std_msgs::Bool>("/dropper",100);
   ROS_INFO("Teleop dispatcher initialized..");
 
 
