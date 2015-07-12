@@ -114,7 +114,7 @@ class Buoys:
 
     	#self.found=False
 
-      	self.buoy_msg=buoy()
+      	self .buoy_msg=buoy()
         self.missions_msg=missions()
 
     def reconfigure(self,config,level):
@@ -145,7 +145,7 @@ class Buoys:
 
 
         cv_image=cv2.resize(cv_image,dsize=(self.screen['width'],self.screen['height']))
-
+        print "im in"
         #if self.blur:
 
         #    cv_image=cv2.GaussianBlur(cv_image,ksize=[5,5],sigmaX=0)
@@ -236,6 +236,7 @@ class Buoys:
 
         mask2=cv2.inRange(ch[2],self.highThresh[1],self.lowThresh[1])
         mas=mask.copy()
+        mas2=mask2.copy()
 
         #	mas1=mask1.copy() mas2=mask2.copy()
 
@@ -244,9 +245,12 @@ class Buoys:
         if(self.missions_msg.buoy_red==True):
 
             self.cir(mas,cv_image,1)
+            print "publishwa1franci"
 
         if(self.missions_msg.buoy_green==True):
-             self.cir(mas2,cv_image,2)
+
+            print "publishwa"
+            self.cir(mas2,cv_image,2)
 
 #        self.cir(mas1)
 
