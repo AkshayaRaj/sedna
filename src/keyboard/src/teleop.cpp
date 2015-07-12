@@ -43,19 +43,21 @@ double yaw,pitch,roll;
 ros::Subscriber keyDown_sub;
 ros::Subscriber keyUp_sub;
 ros::Subscriber pressureSub;
-
 ros::Subscriber teleopSetter;
 ros::Subscriber headingSub;
 ros::Subscriber imuSub;
 ros::Subscriber lineSub;
 ros::Subscriber buoySub;
 ros::Subscriber bucketSub;
+ros::Subscriber gateSub;
+
 ros::Publisher teleopPub;
 ros::Publisher inLinePub;
 ros::Publisher inBuoyPub;
 ros::Publisher inBucketPub;
 ros::Publisher dropperPub;
 ros::Publisher missionsPub;
+
 
 int north = NORTH;
 int south= NORTH+179;
@@ -73,6 +75,7 @@ void setCurrent();
 void runMission();
 void getLine(const srmauv_msgs::line::ConstPtr&msg);
 void getBuoy(const srmauv_msgs::buoy::ConstPtr&msg);
+void getGate(const srmauv_msgs::gate::ConstPtr&msg);
 void getBucket(const srmauv_msgs::bucket::ConstPtr&msg);
 void getImu(const sensor_msgs::Imu::ConstPtr& msg);
 
@@ -84,8 +87,6 @@ bool in_depth=false;
 bool in_yaw=false;
 bool in_roll=false;
 bool in_pitch=false;
-bool inLine=false;
-bool inBuoy=false;
 bool inBucket=false;
 
 bool inSidemove=false;
@@ -120,6 +121,7 @@ int main(int argc,char** argv){
   buoySub=nh.subscribe("/buoy",1000,getBuoy);
   bucketSub=nh.subscribe("/bucket",1000,getBucket);
   imuSub=nh.subscribe("/imu/data",1000,getImu);
+  gateSub=nh.subscribe("/gate",1000,getGate);
 
   missionsPub=nh.advertise<srmauv_msgs::missions>("/missions",100);
   teleopPub=nh.advertise<srmauv_msgs::teleop_sedna>("/teleop_sedna",1000);
@@ -213,8 +215,13 @@ void runMission(){
     teleop.forward_input=bucket.y_offset;
     teleop.sidemove_input=bucket.x_offset;
 
-
 }
+
+  if(missions.gate && gate.possible){
+    teleop.sidemove_input=gate.x_offset;
+  }
+
+
 }
 
 void getPressure(const srmauv_msgs::depth &msg){
@@ -249,6 +256,11 @@ void getLine(const srmauv_msgs::line::ConstPtr&msg){
 void getBuoy(const srmauv_msgs::buoy::ConstPtr&msg){
   buoy=*msg;
 }
+
+void getGate(const srmauv_msgs::gate::ConstPtr&msg){
+  gate=*msg;
+}
+
 
 void getBucket(const srmauv_msgs::bucket::ConstPtr&msg){
   bucket.possible=msg->possible;
@@ -359,10 +371,7 @@ void keyDown(const keyboard::KeyConstPtr & key){
           inSidemove=!inSidemove;
           break;
         }
-        case 113: { //Q: dropper
-          teleop.dropper=true;
-          break;
-        }
+    
         case 91: { // {
           shift?teleop.heading_setpoint-=10 : teleop.heading_setpoint--;
           break;
@@ -479,6 +488,22 @@ void keyDown(const keyboard::KeyConstPtr & key){
 
         break;
       }
+      case 113 : { //q enable disable qualification/gate
+        missions.gate=!missions.gate;
+        //inSidemove=!inSidemove;
+
+
+        if(missions.gate){
+          stop_missions();
+          missions.gate=true;
+        }
+        else{
+        stop_missions();
+        }
+
+        break;
+      }
+
 
     }
 
