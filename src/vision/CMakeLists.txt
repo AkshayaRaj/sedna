@@ -18,9 +18,10 @@ generate_dynamic_reconfigure_options(
 	cfg/buoy.cfg
 	cfg/Tutorials.cfg
 	cfg/dropper.cfg
-	cfg/line.cfg	
+	cfg/line.cfg
 	cfg/flare.cfg
 	cfg/linen.cfg
+  cfg/gate.cfg
 )
 
 find_package(OpenCV)
