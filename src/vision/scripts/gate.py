@@ -14,7 +14,7 @@ from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server as DynServer
 from srmauv_msgs.msg import  *
 from srmauv_msgs.srv import *
-import vision.cfg.flareConfig as Config
+import vision.cfg.gateConfig as Config
 from unittest import signals
 from OpenGL.raw.GL.SGIX import framezoom
 
@@ -63,15 +63,14 @@ class Buoys:
 
         self.bridge=CvBridge()
 
-	self.flare_pub=rospy.Publisher("/flare",flare)
 
-        self.camera_topic=rospy.get_param('~image',
-        '/sedna/camera/front/image_raw')
+        self.gate_pub=rospy.Publisher("/gate",gate)
+        self.camera_topic=rospy.get_param('~image','/sedna/camera/front/image_raw')
 
 
-        self.image_filter_pub=rospy.Publisher("/vision/flare/image_filter",Image)
+        self.image_filter_pub=rospy.Publisher("/vision/gate/image_filter",Image)
+        self.image_1_pub=rospy.Publisher("/vision/gate/thresh",Image)
 
-	self.image_1_pub=rospy.Publisher("/vision/flare/thresh",Image)
 
 #	self.image_2_pub=rospy.Publisher("/vision/image_2",Image)
 
@@ -85,8 +84,8 @@ class Buoys:
         #self.minContourArea = 200
 
     	#self.found=False
-
-      	self.flare_msg=flare()
+        self.missions_msg=missions()
+      	self.gate_msg=gate()
 
     def reconfigure(self,config,level):
 
@@ -96,13 +95,13 @@ class Buoys:
 
         #self.lowThresh[1]=config['loU']
 
-        self.lowThresh[2]=config['hiV']
+        self.lowThresh[2]=config['hiOrange']
 
         #self.highThresh[0]=config['hiL']
 
         #self.highThresh[1]=config['hiU']
 
-        self.highThresh[2]=config['loV']
+        self.highThresh[2]=config['loOrange']
 
         self.minContourArea=config['minContourArea']
 
@@ -234,7 +233,7 @@ class Buoys:
     	        self.image_1_pub.publish(self.bridge.cv2_to_imgmsg(mask_out,
     	        encoding="bgr8"))
 
-    	        self.flare_pub.publish(self.flare_msg);
+    	        self.gate_pub.publish(self.gate_msg);
 
 	  #  self.image_2_pub.publish(self.bridge.cv2_to_imgmsg(mask_out2,
 	  #  encoding="bgr8"))
@@ -369,7 +368,7 @@ class Buoys:
 
             if(d==3):
 
-                self.gate_msg.found=true
+                self.gate_msg.possible=True
 
                 wd=self.screen['width']/2
 
@@ -383,7 +382,7 @@ class Buoys:
 
             else :
 
-               self.gate_msg.found=false
+               self.gate_msg.possible=False
 
             '''
 
@@ -402,7 +401,7 @@ class Buoys:
 
 
         self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
-
+        self.missions_sub=rospy.Subscriber("/missions",missions,self.missionsCallBack)
         rospy.loginfo("Subscribed to front camera")
 
         rospy.loginfo(self.camera_topic)
@@ -412,6 +411,10 @@ class Buoys:
         self.image_sub.unregister()
 
         rospy.loginfo("Unregistered front camera")
+
+    def missionsCallBack(self,msg):
+
+        self.missions_msg=msg
 
     def cameraCallback(self,ros_image):
 
@@ -430,12 +433,12 @@ class Buoys:
             rospy.logerr(e)
 
             rospy.loginfo("CvBridge error")
-
-        self.circles(frame)
+        if(self.missions_msg.gate==True):
+            self.circles(frame)
 
 if __name__=="__main__":
 
-    rospy.init_node("flare_detector")
+    rospy.init_node("gate_detector")
 
     buoys=Buoys()
 
