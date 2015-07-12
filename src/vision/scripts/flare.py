@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 
-
 import roslib; roslib.load_manifest('vision')
-
-
 
 import cv2
 
 import math
 
 import numpy as np
-
-
 
 import rospy
 
@@ -35,21 +30,11 @@ from OpenGL.raw.GL.SGIX import framezoom
 
 import signal
 
-
-
-
-
-
-
 lowThresh=np.array([0,0,0])
 
 highThresh=np.array([0,0,0])
 
-
-
 cv2.namedWindow('image')
-
-
 
 class Buoys:
 
@@ -81,8 +66,6 @@ class Buoys:
 
     previousCentroid=None
 
-
-
     # Keep track of the previous centroids for matching
 
     previousCentroid = None
@@ -90,8 +73,6 @@ class Buoys:
     previousArea = None
 
     found=None
-
-
 
     def rosimg2cv(self,ros_img):
 
@@ -105,17 +86,7 @@ class Buoys:
 
             rospy.loginfo("CvBridge error")
 
-
-
         return frame
-
-
-
-
-
-
-
-
 
     def __init__(self):
 
@@ -123,18 +94,17 @@ class Buoys:
 
         #image= np.zeros((320,512,3), np.uint8)
 
-
-
         self.imgData={'detected':False}
 
         self.bridge=CvBridge()
-	self.flare_pub=rospy.Publisher("/flare",flare)
-        self.camera_topic=rospy.get_param('~image', '/sedna/camera/front/image_raw')
-        self.image_filter_pub=rospy.Publisher("/vision/flare/image_filter",Image)
-	self.image_1_pub=rospy.Publisher("/vision/flare/thresh",Image)
-#	self.image_2_pub=rospy.Publisher("/vision/image_2",Image)
-#	self.image_3_pub=rospy.Publisher("/vision/image_3",Image)
 
+        self.camera_topic=rospy.get_param('~image',        '/sedna/camera/front/image_raw')
+        self.image_filter_pub=rospy.Publisher("/vision/buoy/image_filter",Image)
+
+        self.buoy_pub=rospy.Publisher("/buoy",buoy)
+        self.image_1_pub=rospy.Publisher("/vision/buoy/thresh",Image)
+        #self.image_2_pub=rospy.Publisher("/vision/image_2",Image)
+        #    self.image_3_pub=rospy.Publisher("/vision/image_3",Image)
 
         self.register()
 
@@ -144,11 +114,8 @@ class Buoys:
 
     	#self.found=False
 
-
-
-      	self.flare_msg=flare()
-
-
+      	self.buoy_msg=buoy()
+        self.missions_msg=missions()
 
     def reconfigure(self,config,level):
 
@@ -174,22 +141,8 @@ class Buoys:
 
         return config
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def circles(self,cv_image):
+
 
         cv_image=cv2.resize(cv_image,dsize=(self.screen['width'],self.screen['height']))
 
@@ -197,13 +150,9 @@ class Buoys:
 
         #    cv_image=cv2.GaussianBlur(cv_image,ksize=[5,5],sigmaX=0)
 
-
-
         #Added Code
 
-
-        '''
-        inB, inG, inR = cv2.split(cv_image)
+        ''' inB, inG, inR = cv2.split(cv_image)
 
         avgR = np.mean(inR)
 
@@ -213,8 +162,6 @@ class Buoys:
 
         avgGray = np.mean((avgB, avgG, avgR))
 
-
-
         if avgB == 0:
 
             outB = inB
@@ -222,8 +169,6 @@ class Buoys:
         else:
 
             outB = (avgGray/avgB)*inB
-
-
 
         if avgG == 0:
 
@@ -233,8 +178,6 @@ class Buoys:
 
             outG = (avgGray/avgG)*inG
 
-
-
         if avgR == 0:
 
             outR = inR
@@ -243,11 +186,7 @@ class Buoys:
 
             outR = (avgGray/avgR)*inR
 
-
-
         maxRGB = (np.max(outR), np.max(outG), np.max(outB))
-
-
 
         factor = np.max(maxRGB)
 
@@ -259,14 +198,10 @@ class Buoys:
 
             outB = 255*outB/factor
 
+        outImg = cv2.merge((np.uint8(outB), np.uint8(outG), np.uint8(outR))) '''
 
 
-        outImg = cv2.merge((np.uint8(outB), np.uint8(outG), np.uint8(outR)))
-	'''
-
-
-
-	self.image=cv_image.copy()
+        self.image=cv_image.copy()
         channels=cv2.split(cv_image)
 
         channels[0] = cv2.equalizeHist(channels[0])
@@ -293,29 +228,29 @@ class Buoys:
 
         enhancedImg = cv2.medianBlur(sum, 3)
 
-        ch=cv2.split(enhancedImg)
-	#print "value",self.highThresh[2]
+        ch=cv2.split(enhancedImg) #print "value",self.highThresh[2]
 
         mask = cv2.inRange(ch[1],self.highThresh[2],self.lowThresh[2])
 
    #     mask1=cv2.inRange(ch[1],self.highThresh[0],self.lowThresh[0])
 
         mask2=cv2.inRange(ch[2],self.highThresh[1],self.lowThresh[1])
+        mas=mask.copy()
 
-	mas=mask.copy()
-#	mas1=mask1.copy()
-	mas2=mask2.copy()
+        #	mas1=mask1.copy() mas2=mask2.copy()
 
-        #ADDED
-	mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
-        self.cir(mas,cv_image,1)
-	self.cir(mas2,cv_image,2)
+        #ADDED mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
+
+        if(self.missions_msg.buoy_red==True):
+
+            self.cir(mas,cv_image,1)
+
+        if(self.missions_msg.buoy_green==True):
+             self.cir(mas2,cv_image,2)
 
 #        self.cir(mas1)
 
  #       self.cir(mas2)
-
-
 
        # cv2.imshow(mask)
 
@@ -323,29 +258,27 @@ class Buoys:
 
         #cv2.imshow(mask2)
 
-       # mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
-#	mask_out1=cv2.cvtColor(mas1,cv2.COLOR_GRAY2BGR)
-#	mask_out2=cv2.cvtColor(mas2,cv2.COLOR_GRAY2BGR)
-#	mask_out3=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
+        mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
+       # mask_out1=cv2.cvtColor(mas1,cv2.COLOR_GRAY2BGR) #
+       # mask_out2=cv2.cvtColor(mas2,cv2.COLOR_GRAY2BGR) #
+       # mask_out3=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
+
         try:
 
-            self.image_filter_pub.publish(self.bridge.cv2_to_imgmsg(self.image, encoding="bgr8"))
-	    self.image_1_pub.publish(self.bridge.cv2_to_imgmsg(mask_out, encoding="bgr8"))
-	    self.flare_pub.publish(self.flare_msg);
-	  #  self.image_2_pub.publish(self.bridge.cv2_to_imgmsg(mask_out2, encoding="bgr8"))
-         #   self.image_3_pub.publish(self.bridge.cv2_to_imgmsg(mask_out3, encoding="bgr8"))
+
+            self.image_filter_pub.publish(self.bridge.cv2_to_imgmsg(self.image,encoding="bgr8"))
+            self.image_1_pub.publish(self.bridge.cv2_to_imgmsg(mask_out,encoding="bgr8"))
+            self.buoy_pub.publish(self.buoy_msg);
+
+            #       self.image_2_pub.publish(self.bridge.cv2_to_imgmsg(mask_out2,encoding="bgr8"))
+             # self.image_3_pub.publish(self.bridge.cv2_to_imgmsg(mask_out3,encoding="bgr8"))
         except CvBridgeError as e:
 
             rospy.logerr(e)
 
-
-
     # ADDED FUNCTION
 
-
-
     def cir(self,im,cv_image,dis):
-
 
         contours, hierachy = cv2.findContours(im, cv2.RETR_EXTERNAL,
 
@@ -353,20 +286,27 @@ class Buoys:
 
         #cv2.drawContours(mask, contours,-1, (0,255,0), 3)
 
-        contours = filter(lambda c: cv2.contourArea(c) >self.minContourArea, contours)
+        contours = filter(lambda c: cv2.contourArea(c) >self.minContourArea,
+        contours)
 
-        contours = sorted(contours, key=cv2.contourArea, reverse=True) # Sort by largest contour
+        contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
-	if len(contours) > 0 :
-		if(dis==1):
-			self.flare_msg.possible_red=True
-		if(dis==2):
-			self.flare_msg.possible_green=True
-	else :
-	        if(dis==1):
-			self.flare_msg.possible_red=False
-		if(dis==2):
-			self.flare_msg.possible_green=False
+        # Sort by largest contour
+
+    	if len(contours) > 0 :
+
+             if(dis==1):
+
+                 self.buoy_msg.possible_red=True
+             if(dis==2):
+
+    	         self.buoy_msg.possible_green=True
+
+        else :
+            if(dis==1):
+                self.buoy_msg.possible_red=False
+            if(dis==2):
+                self.buoy_msg.possible_green=False
 
         if len(contours) > 0:
 
@@ -380,11 +320,9 @@ class Buoys:
 
             d=(int(mu['m10']/muArea))
 
-	    cv2.circle(self.image,centroidToBump,2,(0,255,0),3)
 
+            cv2.circle(self.image,centroidToBump,2,(0,255,0),3)
             #for yaw value
-
-
 
             b=math.radians(30)
 
@@ -397,33 +335,29 @@ class Buoys:
             #print("offset",x)
 
             fin=math.atan(y*x/w)
-	    fin=math.degrees(fin)
-	    cv2.putText(self.image, str(fin), (30, 30),cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255))
-            #print ("final",fin)
+            fin=math.degrees(fin)
+            cv2.putText(self.image,str(fin), (30, 30),cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255))
 
-            #print("degrees",math.degrees(fin))
-	    if(dis==1):	
-		 self.flare_msg.x_offset_red=float(fin)
-	  	  # CHANGED D SIGN
-	   	 self.flare_msg.y_offset_red=(float)((-0.65)*(self.screen['width']/2 - centroidToBump[0]))
-           	 #CENTER POINT VALUES
-
-	    if(dis==2):
-                 self.flare_msg.x_offset_green=float(fin)
-                  # CHANGED D SIGN
-                 self.flare_msg.y_offset_green =(float)((-0.65)*(self.screen['width']/2 - centroidToBump[0]))
-                 #CENTER POINT VALUES
-	
+            if(dis==2):
+                self.buoy_msg.y_offset_green =(float)((-0.65)*(self.screen['width']/2 -centroidToBump[0]))
+                self.buoy_msg.x_offset_green=float(fin)
 
 
-	'''
-            #rectArea = muArea
+
+            if(dis==1):
+                self.buoy_msg.x_offset_red=float(fin)
+
+                self.buoy_msg.y_offset_red=(float)((-0.65)*(self.screen['width']/2 -centroidToBump[0]))
+
+
+
+            #CENTER POINT VALUES
+
+	''' #rectArea = muArea
 
             previousCentroid = centroidToBump
 
             #previousArea = rectArea
-
-
 
         else:
 
@@ -438,8 +372,6 @@ class Buoys:
                                    minRadius = circleParams['minRadius'],
 
                                    maxRadius = circleParams['maxRadius'])
-
-
 
                 # Check if center of circles inside contours
 
@@ -459,19 +391,21 @@ class Buoys:
 
                              circleCentroid = (circle[0], circle[1])
 
-                             if abs(math.hypot(centroid[0]-circlecentroid[0],centroid[1]-circlecentroid[1])) < circle[2]:
+                             if
+                             abs(math.hypot(centroid[0]-circlecentroid[0],centroid[1]-circlecentroid[1])) <
+                             circle[2]:
 
                                  fb = True
 
-                                    # Find new centroid by averaging the centroid and circle centroid
+                                    # Find new centroid by averaging the
+                                    # centroid and circle centroid
 
                              newCentroid =(int(centroid[0]+circleCentroid[0])/2,
+
 
                                               int(centroid[1]+circleCentroid[1])/2)
 
                              allCentroidList.append(newCentroid)
-
-
 
                              allAreaList.append(cv2.contourArea(contour))
 
@@ -479,11 +413,10 @@ class Buoys:
 
                              # Draw circles
 
-                             cv2.circle(img, newCentroid, circle[2], (255, 255, 0), 2)
+                             cv2.circle(img, newCentroid, circle[2], (255, 255,
+                             0), 2)
 
                              cv2.circle(img, newCentroid, 2, (255, 0, 255), 3)
-
-
 
                  # Find the circle with the largest radius
 
@@ -495,31 +428,23 @@ class Buoys:
 
                         rectArea = allAreaList[maxIndex]
 
-
-
                         previousCentroid = centroidToBump
 
                         previousArea = rectArea
 
                  '''
 
-
-
-
-
     def register(self):
 
-
-
+#
 #        self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
 
-        self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
 
+        self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallBack)
+        self.missions_sub=rospy.Subscriber("/missions",missions,self.missionsCallBack)
         rospy.loginfo("Subscribed to front camera")
 
         rospy.loginfo(self.camera_topic)
-
-
 
     def unregister(self):
 
@@ -527,15 +452,11 @@ class Buoys:
 
         rospy.loginfo("Unregistered front camera")
 
+    def missionsCallBack(self,msg):
 
+        self.missions_msg=msg
 
-    def cameraCallback(self,ros_image):
-
-        #rospy.loginfo("in cam")
-
-        #cv_image=self.rosimg2cv(ros_image)
-
-       # self.circles(cv_image)
+    def cameraCallBack(self,ros_image):
 
         try:
 
@@ -547,15 +468,16 @@ class Buoys:
 
             rospy.loginfo("CvBridge error")
 
-        self.circles(frame)
+        if(self.missions_msg.buoy_red==True):
 
-
+            self.circles(frame)
+        if(self.missions_msg.buoy_green==True):
+            self.circles(frame)
 
 if __name__=="__main__":
 
-    rospy.init_node("flare_detector")
+    rospy.init_node("buoy_detector")
 
     buoys=Buoys()
 
     rospy.spin()
-

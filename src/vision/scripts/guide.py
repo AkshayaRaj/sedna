@@ -121,13 +121,16 @@ class Line:
         self.camera_topic=rospy.get_param('~image',
         '/sedna/camera/bottom/image_raw')
 
+        self.line_pub=rospy.Publisher("/line_follower",line)
+
         self.image_filter_pub=rospy.Publisher("/Vision/image_filter",Image)
 
-	self.image_thresh_pub=rospy.Publisher("/Vision/image_thresh",Image)
 
-	self.line_pub=rospy.Publisher("/line_follower",line)
+        self.image_thresh_pub=rospy.Publisher("/Vision/image_thresh",Image)
+
 
         self.register()
+
 
         self.previousCentroid=(-1,-1)
 
@@ -135,21 +138,22 @@ class Line:
 
     	#self.found=False
 
-	self.lineMsg=line()
+    	self.lineMsg=line()
+        self.missions_msg=missions()
 
-	self.lineMsg.possible=False
+    	self.lineMsg.possible=False
 
-	self.lineMsg.heading=0
+    	self.lineMsg.heading=0
 
-	self.lineMsg.distance=0
+    	self.lineMsg.distance=0
 
     def reconfigure(self,config,level):
 
         rospy.loginfo('Reconfigure request !')
 
-        self.val = config['val']
+        #self.val = config['val']
 
-        self.upperThresh =config['upperThresh']
+        #self.upperThresh =config['upperThresh']
 
         self.areaThresh = config['areaThresh']
 
@@ -270,13 +274,13 @@ class Line:
 
   #      mask2=cv2.inRange(ch[2],self.highThresh[1],self.lowThresh[1])
 
-	mas=mask.copy()
+
 
         #ADDED
+        mas=mask.copy()
 
-	mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
-
-        out = cv2.cvtColor(grayImg, cv2.cv.CV_GRAY2BGR)
+        mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
+        #out = cv2.cvtColor(grayImg, cv2.cv.CV_GRAY2BGR)
 
         # Find centroid and bounding box
 
@@ -371,7 +375,7 @@ class Line:
 
                     angle = 90
 
-	    self.lineMsg.heading=float(angle)
+	        self.lineMsg.heading=float(angle)
 
             #Testing
 
@@ -416,7 +420,7 @@ class Line:
 
 
         self.image_sub=rospy.Subscriber(self.camera_topic,Image,self.cameraCallback)
-
+        self.missions_sub=rospy.Subscriber("/missions",missions,self.missionsCallBack)
         rospy.loginfo("Subscribed to front camera")
 
         rospy.loginfo(self.camera_topic)
@@ -426,6 +430,11 @@ class Line:
         self.image_sub.unregister()
 
         rospy.loginfo("Unregistered front camera")
+
+
+
+    def missionsCallBack(self,msg):
+        self.missions_msg=msg
 
     def cameraCallback(self,ros_image):
 
@@ -444,8 +453,8 @@ class Line:
             rospy.logerr(e)
 
             rospy.loginfo("CvBridge error")
-
-        self.circles(frame)
+        if(self.missions_msg.possible==True):
+            self.circles(frame)
 
 if __name__=="__main__":
 
