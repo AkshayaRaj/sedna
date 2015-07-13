@@ -223,7 +223,6 @@ void runMission(){
 else{
 	teleop.sidemove_input=0;
 	teleop.forward_input=0;
-}
 
 
 }

@@ -352,14 +352,14 @@ class Buoys:
 
                         if(d==1):
 
-                            centx = (mu['m10']/muArea)
+                            centx = (mu['m10']/muArea, mu['m01']/muArea)
 
                             centy = (mu['m10']/muArea, mu['m01']/muArea)
 			    d=d+1
 
                         if(d==2):
 
-                            centx1 = (mu['m10']/muArea)
+                            centx1 = (mu['m10']/muArea, mu['m01']/muArea)
 
                             centy1 = (mu['m10']/muArea, mu['m01']/muArea)
 			    d=d+1
