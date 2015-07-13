@@ -2,9 +2,9 @@
 
 
 #define NORTH -180
-#define DEPTH_SAUVC -90
+#define DEPTH_SAUVC 500
 #define DEPTH_BUCKET -80
-#define DEPTH_BUOY -80
+#define DEPTH_BUOY 500
 
 #include <srmauv_msgs/teleop_sedna.h>
 #include <ros/ros.h>

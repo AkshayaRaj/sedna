@@ -115,14 +115,17 @@ class Buoys:
 
 
             cv_image=cv2.resize(cv_image,dsize=(self.screen['width'],self.screen['height']))
+	
 
+	    self.image=cv_image
+	    '''	
             #if self.blur:
 
             #    cv_image=cv2.GaussianBlur(cv_image,ksize=[5,5],sigmaX=0)
 
             #Added Code
 
-            '''
+            
 
             inB, inG, inR = cv2.split(cv_image)
 
@@ -172,41 +175,47 @@ class Buoys:
 
             outImg = cv2.merge((np.uint8(outB), np.uint8(outG), np.uint8(outR)))
 
-            '''
+            
 
             self.image=cv_image.copy()
-
-            channels=cv2.split(cv_image)
+	    		
+            channels=cv2.split(outImg)
 
             channels[0] = cv2.equalizeHist(channels[0])
 
             channels[1] = cv2.equalizeHist(channels[1])
 
-            #channels[2] = cv2.equalizeHist(channels[2])
+	   # channels[2] = cv2.equalizeHist(channels[2])
 
             img = cv2.merge(channels, cv_image)
+	    
 
+	    erodeEl = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+	    img = cv2.erode(img, erodeEl)
             img=cv2.bilateralFilter(img, -1, 5, 0.1)
 
             kern = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
 
             img=cv2.morphologyEx(img, cv2.MORPH_CLOSE, kern)
 
-            hsvImg=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+             '''	
+	    hsvImg=cv2.cvtColor(cv_image,cv2.COLOR_BGR2HSV)
+	    	
+	   # luvImg=cv2.cvtColor(cv_image,cv2.COLOR_BGR2LUV)
 
-            luvImg=cv2.cvtColor(img,cv2.COLOR_BGR2LUV)
-
-            gauss = cv2.GaussianBlur(luvImg, ksize=(5,5), sigmaX=10)
+            '''
+	    gauss = cv2.GaussianBlur(luvImg, ksize=(5,5), sigmaX=10)
 
             sum = cv2.addWeighted(luvImg, 1.5, gauss, -0.6, 0)
 
             enhancedImg = cv2.medianBlur(sum, 3)
-
-            ch=cv2.split(enhancedImg)
+	    '''
+	
+            ch=cv2.split(hsvImg)
 
             #print "value",self.highThresh[2]
 
-            mask = cv2.inRange(ch[2],self.highThresh[2],self.lowThresh[2])
+            mask = cv2.inRange(ch[1],self.highThresh[2],self.lowThresh[2])
 
            # mask1=cv2.inRange(ch[1],self.highThresh[0],self.lowThresh[0])
 
@@ -227,8 +236,7 @@ class Buoys:
 
             try:
 
-                self.image_filter_pub.publish(self.bridge.cv2_to_imgmsg(self.image,
-            encoding="bgr8"))
+                self.image_filter_pub.publish(self.bridge.cv2_to_imgmsg(self.image,encoding="bgr8"))
 
     	        self.image_1_pub.publish(self.bridge.cv2_to_imgmsg(mask_out,
     	        encoding="bgr8"))
@@ -381,8 +389,8 @@ class Buoys:
                 #ht=self.screen['height']/2
 
                 reqx=dev-wd
-
-                self.gate_msg.x_offset=float(reqx)
+		reqx=reqx*(-0.65)
+                self.gate_msg.x_offset=(float)(reqx)
 
             else :
 
