@@ -7,6 +7,7 @@
 #include "defines.h"
 #include <std_msgs/Bool.h>
 
+boolean kill=false;
 
 
 
@@ -35,6 +36,7 @@ ros::Subscriber<srmauv_msgs::thruster>thruster_sub("/thruster_speed",collectThru
 
 
 void setup(){
+
   delay(500);
   s3.attach(TH3);  
   s4.attach(TH4);
@@ -95,6 +97,8 @@ void loop(){
 
 
 void initThrusters(){
+  
+  
  
   //active low seabotix relays:
   pinMode(RELAY1,OUTPUT);
@@ -140,6 +144,25 @@ void initThrusters(){
 
 
 void runThrusters(){
+  
+  int kill_level=analogRead(KILL);
+  if (kill_level==1023){
+    kill=!kill;
+    
+  }
+  
+  if(kill){
+    thruster.speed1=0;
+    thruster.speed2=0;
+    thruster.speed3=0;
+    thruster.speed4=0;
+    thruster.speed5=0;
+    thruster.speed6=0;
+    thruster.speed7=0;
+    thruster.speed8=0;
+  }
+  
+  
   s3.write(1500+thruster.speed3);
  // delay(10);
   s4.write(1500+thruster.speed4);
