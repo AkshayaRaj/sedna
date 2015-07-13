@@ -117,13 +117,14 @@ class Buoys:
             cv_image=cv2.resize(cv_image,dsize=(self.screen['width'],self.screen['height']))
 	
 
-	    self.image=cv_image
-	    '''	
+	    #self.image=cv_image
+	   	
             #if self.blur:
 
             #    cv_image=cv2.GaussianBlur(cv_image,ksize=[5,5],sigmaX=0)
 
-            #Added Code
+            '''
+	    #Added Code
 
             
 
@@ -175,11 +176,11 @@ class Buoys:
 
             outImg = cv2.merge((np.uint8(outB), np.uint8(outG), np.uint8(outR)))
 
-            
+            '''	
 
             self.image=cv_image.copy()
 	    		
-            channels=cv2.split(outImg)
+            channels=cv2.split(cv_image)
 
             channels[0] = cv2.equalizeHist(channels[0])
 
@@ -198,24 +199,28 @@ class Buoys:
 
             img=cv2.morphologyEx(img, cv2.MORPH_CLOSE, kern)
 
-             '''	
+            '''	
 	    hsvImg=cv2.cvtColor(cv_image,cv2.COLOR_BGR2HSV)
 	    	
-	   # luvImg=cv2.cvtColor(cv_image,cv2.COLOR_BGR2LUV)
+	    luvImg=cv2.cvtColor(cv_image,cv2.COLOR_BGR2LUV)
 
             '''
+ 	    luvImg=cv2.cvtColor(cv_image,cv2.COLOR_BGR2LUV)
+
 	    gauss = cv2.GaussianBlur(luvImg, ksize=(5,5), sigmaX=10)
 
             sum = cv2.addWeighted(luvImg, 1.5, gauss, -0.6, 0)
 
             enhancedImg = cv2.medianBlur(sum, 3)
-	    '''
+
+	   
 	
-            ch=cv2.split(hsvImg)
+            ch=cv2.split(enhancedImg)
 
             #print "value",self.highThresh[2]
-
-            mask = cv2.inRange(ch[1],self.highThresh[2],self.lowThresh[2])
+	   
+	
+            mask = cv2.inRange(ch[2],self.highThresh[2],self.lowThresh[2])
 
            # mask1=cv2.inRange(ch[1],self.highThresh[0],self.lowThresh[0])
 
