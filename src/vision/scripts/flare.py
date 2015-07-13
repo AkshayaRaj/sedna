@@ -230,7 +230,7 @@ class Buoys:
 
         ch=cv2.split(enhancedImg) #print "value",self.highThresh[2]
 
-        mask = cv2.inRange(ch[1],self.highThresh[2],self.lowThresh[2])
+        mask = cv2.inRange(ch[2],self.highThresh[2],self.lowThresh[2])
 
    #     mask1=cv2.inRange(ch[1],self.highThresh[0],self.lowThresh[0])
 
@@ -263,15 +263,21 @@ class Buoys:
         #cv2.imshow(mask2)
 
         mask_out=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
-       # mask_out1=cv2.cvtColor(mas1,cv2.COLOR_GRAY2BGR) #
+
+        mask_out1=cv2.cvtColor(mask2,cv2.COLOR_GRAY2BGR) #
        # mask_out2=cv2.cvtColor(mas2,cv2.COLOR_GRAY2BGR) #
        # mask_out3=cv2.cvtColor(mask,cv2.COLOR_GRAY2BGR)
 
         try:
 
 
+
             self.image_filter_pub.publish(self.bridge.cv2_to_imgmsg(self.image,encoding="bgr8"))
-            self.image_1_pub.publish(self.bridge.cv2_to_imgmsg(mask_out,encoding="bgr8"))
+            if(self.missions_msg.buoy_red==True):
+                self.image_1_pub.publish(self.bridge.cv2_to_imgmsg(mask_out,encoding="bgr8"))
+            if(self.missions_msg.buoy_green==True):
+                self.image_1_pub.publish(self.bridge.cv2_to_imgmsg(mask_out1,encoding="bgr8"))
+
             self.buoy_pub.publish(self.buoy_msg);
 
             #       self.image_2_pub.publish(self.bridge.cv2_to_imgmsg(mask_out2,encoding="bgr8"))
